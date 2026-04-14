@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LGS/YKS Başarı Paneli</title>
+    <style>
+        :root { --p: #004a99; --s: #27ae60; --d: #c0392b; --w: #f39c12; --bg: #f0f4f8; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); margin: 0; padding: 8px; font-size: 11px; }
+        .card { background: white; border-radius: 8px; padding: 10px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .logo-row { text-align: center; }
+        .logo-row img { max-width: 420px; margin-bottom: 5px; }
+        
+        .header-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .date-input { grid-column: span 2; margin-top: 5px; text-align: center; font-weight: bold; border: 1px solid #ddd !important; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { border: 1px solid #e2e8f0; padding: 4px; text-align: center; }
+        th { background: #f8fafc; font-size: 10px; color: #64748b; }
+        
+        input { border: 1px solid #cbd5e1; border-radius: 3px; padding: 4px; font-size: 11px; width: 100%; outline: none; }
+        .top-time-input { background: #fffde7; font-weight: bold; text-align: center; border: 1px solid var(--w); }
+        .w-task { background: #fafafa; }
+
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 8px; }
+        .stat-item { padding: 6px; border-radius: 4px; color: white; text-align: center; line-height: 1.2; }
+        
+        .btn { background: var(--p); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin: 2px; }
+        .btn-save { background: var(--s); width: 100%; padding: 8px; font-weight: bold; margin-top: 10px; }
+        
+        #feedbackBox { padding: 8px; border-radius: 5px; font-weight: bold; text-align: center; margin-top: 8px; display: none; font-size: 12px; }
+        .current-day { background: #e0f2fe !important; border: 2px solid var(--p) !important; }
+    </style>
+</head>
+<body>
+
+<div class="card logo-row">
+    <img src="https://i.ibb.co/84mb5gYg/file-00000000ce8c72439cfbe8e2985449ed.png" alt="logo">
+    <div class="header-inputs">
+        <input type="text" id="stuName" placeholder="Öğrenci Adı">
+        <input type="text" id="stuClass" placeholder="Hedef / Sınıf">
+        <input type="text" id="manualDate" class="date-input" placeholder="Tarih Aralığı (Örn: 12-18 Nisan)">
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin:0; font-size:12px; color:var(--p)">📅 Haftalık Program</h3>
+    <table id="weeklyTable">
+        <thead>
+            <tr>
+                <th style="width:12%;">Gün</th>
+                <th><input type="number" class="top-time" placeholder="Süre dk"></th>
+                <th><input type="number" class="top-time" placeholder="Süre dk"></th>
+                <th><input type="number" class="top-time" placeholder="Süre dk"></th>
+                <th><input type="number" class="top-time" placeholder="Süre dk"></th>
+                <th style="width:30px;">✓</th>
+            </tr>
+        </thead>
+        <tbody id="weeklyBody"></tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3 style="margin:0; font-size:12px; color:var(--p)">📊 Soru Analizi & Hız</h3>
+    <table id="analysisTable">
+        <thead>
+            <tr>
+                <th>Ders</th>
+                <th style="width:35px;">S</th>
+                <th style="width:35px;">D</th>
+                <th style="width:35px;">Y</th>
+                <th style="width:40px;">%</th>
+            </tr>
+        </thead>
+        <tbody id="analysisBody"></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5"><button class="btn" onclick="addRow()">+ Yeni Test/Ders Ekle</button></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="summary-grid">
+        <div class="stat-item" style="background:var(--p)">Top. Soru<br><b id="totalS">0</b></div>
+        <div class="stat-item" style="background:var(--s)">Top. Doğru<br><b id="totalD">0</b></div>
+        <div class="stat-item" style="background:var(--d)">Top. Yanlış<br><b id="totalY">0</b></div>
+        <div class="stat-item" style="background:var(--w)">Başarı<br>%<b id="totalAvg">0</b></div>
+    </div>
+    
+    <div id="feedbackBox"></div>
+</div>
+
+<button class="btn btn-save" onclick="saveData()">💾 TÜM BİLGİLERİ KAYDET</button>
+
+<script>
+    const gunler = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+
+    window.onload = function() {
+        initWeeklyTable();
+        loadData();
+        calc();
+    };
+
+    function initWeeklyTable() {
+        const body = document.getElementById("weeklyBody");
+        body.innerHTML = "";
+        gunler.forEach((gun, index) => {
+            const row = body.insertRow();
+            const d = new Date().getDay();
+            const bugunIdx = d === 0 ? 6 : d - 1;
+            if(index === bugunIdx) row.className = "current-day";
+
+            row.innerHTML = `
+                <td style="font-weight:bold; font-size:10px;">${gun.substring(0,3)}</td>
+                <td><input type="text" class="w-task" placeholder="Ders"></td>
+                <td><input type="text" class="w-task" placeholder="Ders"></td>
+                <td><input type="text" class="w-task" placeholder="Ders"></td>
+                <td><input type="text" class="w-task" placeholder="Ders"></td>
+                <td><input type="checkbox" class="w-check"></td>
+            `;
+        });
+    }
+
+    function addRow() {
+        const body = document.getElementById("analysisBody");
+        const row = body.insertRow();
+        row.innerHTML = `
+            <td><input type="text" class="a-ders" placeholder="Ders"></td>
+            <td><input type="number" class="a-s" style="width:35px;text-align:center" oninput="calc()"></td>
+            <td><input type="number" class="a-d" style="width:35px;text-align:center" oninput="calc()"></td>
+            <td><input type="number" class="a-y" style="width:35px;text-align:center" oninput="calc()"></td>
+            <td><b class="a-p">0%</b></td>
+        `;
+    }
+
+    function calc() {
+        let ts=0, td=0, ty=0;
+        document.querySelectorAll("#analysisBody tr").forEach(r => {
+            let s = parseFloat(r.querySelector(".a-s").value) || 0;
+            let d = parseFloat(r.querySelector(".a-d").value) || 0;
+            let y = parseFloat(r.querySelector(".a-y").value) || 0;
+            let p = s > 0 ? Math.round((d/s)*100) : 0;
+            r.querySelector(".a-p").innerText = p + "%";
+            ts += s; td += d; ty += y;
+        });
+        document.getElementById("totalS").innerText = ts;
+        document.getElementById("totalD").innerText = td;
+        document.getElementById("totalY").innerText = ty;
+        let avg = ts > 0 ? Math.round((td/ts)*100) : 0;
+        document.getElementById("totalAvg").innerText = avg;
+        const fb = document.getElementById("feedbackBox");
+        fb.style.display = ts > 0 ? "block" : "none";
+        if(avg >= 85) { fb.innerText = "Mükemmel! 🚀"; fb.style.background="#e8f5e9"; fb.style.color="#2e7d32"; }
+        else if(avg >= 70) { fb.innerText = "Başarılı. ✍️"; fb.style.background="#e3f2fd"; fb.style.color="#1565c0"; }
+        else { fb.innerText = "Daha çok çalışmalısın! 💪"; fb.style.background="#fff3e0"; fb.style.color="#ef6c00"; }
+    }
+
+    function saveData() {
+        const data = {
+            name: document.getElementById("stuName").value,
+            class: document.getElementById("stuClass").value,
+            date: document.getElementById("manualDate").value,
+            topTimes: Array.from(document.querySelectorAll(".top-time")).map(i => i.value),
+            tasks: Array.from(document.querySelectorAll(".w-task")).map(i => i.value),
+            checks: Array.from(document.querySelectorAll(".w-check")).map(i => i.checked),
+            analysis: Array.from(document.querySelectorAll("#analysisBody tr")).map(r => ({
+                ders: r.querySelector(".a-ders").value,
+                s: r.querySelector(".a-s").value,
+                d: r.querySelector(".a-d").value,
+                y: r.querySelector(".a-y").value
+            }))
+        };
+        localStorage.setItem("ogrenciVeri", JSON.stringify(data));
+        alert("Başarıyla kaydedildi!");
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem("ogrenciVeri");
+        if(!saved) return;
+        const data = JSON.parse(saved);
+        document.getElementById("stuName").value = data.name || "";
+        document.getElementById("stuClass").value = data.class || "";
+        document.getElementById("manualDate").value = data.date || "";
+        
+        const topTimes = document.querySelectorAll(".top-time");
+        const tasks = document.querySelectorAll(".w-task");
+        const checks = document.querySelectorAll(".w-check");
+        
+        if(data.topTimes) data.topTimes.forEach((v, i) => { if(topTimes[i]) topTimes[i].value = v; });
+        if(data.tasks) data.tasks.forEach((v, i) => { if(tasks[i]) tasks[i].value = v; });
+        if(data.checks) data.checks.forEach((v, i) => { if(checks[i]) checks[i].checked = v; });
+        
+        if(data.analysis) {
+            const body = document.getElementById("analysisBody");
+            body.innerHTML = "";
+            data.analysis.forEach(item => {
+                const row = body.insertRow();
+                row.innerHTML = `
+                    <td><input type="text" class="a-ders" value="${item.ders}"></td>
+                    <td><input type="number" class="a-s" style="width:35px;text-align:center" value="${item.s}" oninput="calc()"></td>
+                    <td><input type="number" class="a-d" style="width:35px;text-align:center" value="${item.d}" oninput="calc()"></td>
+                    <td><input type="number" class="a-y" style="width:35px;text-align:center" value="${item.y}" oninput="calc()"></td>
+                    <td><b class="a-p">0%</b></td>
+                `;
+            });
+        }
+    }
+</script>
+</body>
+</html>
