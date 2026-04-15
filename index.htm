@@ -6,22 +6,17 @@
     <title>ACAMAY Takip</title>
     <style>
         :root { --p: #004a99; --s: #27ae60; --d: #c0392b; --w: #f39c12; --bg: #f4f7f9; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); margin: 0; padding: 5px; font-size: 10px; overflow-x: hidden; }
         
-        /* Logo Alanı ve Arka Planı */
         .logo-container { 
             background: linear-gradient(135deg, #ffffff 0%, #e1e8ed 100%);
-            border-radius: 10px;
-            padding: 8px;
-            text-align: center;
-            margin-bottom: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 10px; padding: 6px; text-align: center; margin-bottom: 8px;
         }
-        .logo-container img { max-width: 140px; height: auto; }
+        .logo-container img { max-width: 110px; height: auto; }
 
         .tabs { display: flex; gap: 4px; margin-bottom: 8px; }
-        .tab-btn { flex: 1; padding: 8px; border: none; border-radius: 6px; background: #d1d5db; font-weight: bold; font-size: 10px; cursor: pointer; }
+        .tab-btn { flex: 1; padding: 8px; border: none; border-radius: 6px; background: #d1d5db; font-weight: bold; font-size: 10px; }
         .tab-btn.active { background: var(--p); color: white; }
         
         .page { display: none; }
@@ -30,20 +25,21 @@
         .card { background: white; border-radius: 8px; padding: 8px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th, td { border: 1px solid #eee; padding: 4px 2px; text-align: center; overflow: hidden; }
-        th { background: #f9fafb; font-size: 9px; color: #4b5563; }
+        th, td { border: 1px solid #eee; padding: 3px 1px; text-align: center; vertical-align: middle; }
+        th { background: #f9fafb; font-size: 9px; }
         
-        input { border: 1px solid #d1d5db; border-radius: 4px; padding: 4px; font-size: 11px; width: 100%; outline: none; }
-        .n-input { text-align: center; font-weight: bold; background: #fff; border-color: #94a3b8; }
-        .top-time { background: #fffde7; border: 1px solid var(--w); color: #000; }
-
+        input[type="text"], input[type="number"] { border: 1px solid #d1d5db; border-radius: 3px; padding: 4px; font-size: 10px; width: 100%; outline: none; }
+        .n-input { text-align: center; font-weight: bold; }
+        .top-time { background: #fffde7; border: 1px solid var(--w); color: #000; text-align: center; }
+        
         .btn { border: none; padding: 6px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 10px; }
         .btn-add { background: var(--s); color: white; width: 100%; font-size: 14px; }
-        .btn-save { background: var(--s); color: white; width: 100%; padding: 10px; margin-top: 5px; font-size: 12px; }
-        .btn-reset { background: var(--d); color: white; font-size: 9px; margin-top: 15px; padding: 4px 10px; opacity: 0.8; }
-
-        .stat-card { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px; border-radius: 6px; margin-bottom: 4px; border-left: 3px solid var(--p); }
-        .stat-details { text-align: right; font-size: 10px; line-height: 1.2; }
+        .btn-save { background: var(--s); color: white; width: 100%; padding: 10px; margin-top: 5px; width: 100%; }
+        
+        /* Analiz Kartları */
+        .stat-card { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 5px; border-radius: 6px; margin-bottom: 4px; border-left: 3px solid var(--p); }
+        .genel-toplam { background: var(--p); color: white; border-left: none; margin-top: 10px; padding: 8px; }
+        .stat-details { text-align: right; font-size: 10px; }
     </style>
 </head>
 <body>
@@ -58,20 +54,22 @@
 
 <div id="program" class="page active">
     <div class="card">
-        <input type="text" id="manualDate" style="text-align:center; margin-bottom:6px; font-weight:bold" placeholder="Tarih: 12-18 Nisan">
+        <input type="text" id="manualDate" style="text-align:center; margin-bottom:6px; font-weight:bold" placeholder="Tarih Aralığı Girin">
         <table id="weeklyTable">
             <thead>
                 <tr>
-                    <th style="width:14%">Gün</th>
+                    <th style="width:13%">Gün</th>
                     <th><input type="number" class="top-time" placeholder="dk"></th>
                     <th><input type="number" class="top-time" placeholder="dk"></th>
                     <th><input type="number" class="top-time" placeholder="dk"></th>
                     <th><input type="number" class="top-time" placeholder="dk"></th>
+                    <th style="width:10%">✓</th>
                 </tr>
             </thead>
             <tbody id="weeklyBody"></tbody>
         </table>
     </div>
+    <button class="btn btn-save" onclick="saveAll()">💾 KAYDET</button>
 </div>
 
 <div id="analiz" class="page">
@@ -90,15 +88,14 @@
         </table>
         <button class="btn" style="background:var(--p); color:white; width:100%; margin-top:6px" onclick="addRow()">+ Yeni Ders Satırı</button>
     </div>
-
     <div class="card">
-        <h4 style="margin: 0 0 6px 0; color:var(--s); font-size:11px;">Haftalık Başarı Özeti</h4>
+        <h4 style="margin:0 0 6px 0; font-size:11px; color:var(--p)">Haftalık Başarı Özetleri</h4>
         <div id="cumulativeResults"></div>
+        
+        <div id="generalTotalArea"></div>
     </div>
+    <button class="btn btn-save" onclick="saveAll()">💾 KAYDET</button>
 </div>
-
-<button class="btn btn-save" onclick="saveAll()">💾 KAYDET</button>
-<center><button class="btn btn-reset" onclick="resetTotals()">Sıfırla</button></center>
 
 <script>
     const gunler = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
@@ -122,11 +119,12 @@
         gunler.forEach((gun) => {
             const row = body.insertRow();
             row.innerHTML = `
-                <td style="font-weight:bold; font-size:9px;">${gun.substring(0,3)}</td>
+                <td style="font-weight:bold">${gun.substring(0,3)}</td>
                 <td><input type="text" class="w-task"></td>
                 <td><input type="text" class="w-task"></td>
                 <td><input type="text" class="w-task"></td>
                 <td><input type="text" class="w-task"></td>
+                <td><input type="checkbox" class="w-check"></td>
             `;
         });
     }
@@ -135,7 +133,7 @@
         const body = document.getElementById("entryBody");
         const row = body.insertRow();
         row.innerHTML = `
-            <td><input type="text" class="e-name" value="${name}" style="font-size:10px"></td>
+            <td><input type="text" class="e-name" value="${name}"></td>
             <td><input type="number" class="e-s n-input"></td>
             <td><input type="number" class="e-d n-input"></td>
             <td><input type="number" class="e-y n-input"></td>
@@ -149,36 +147,45 @@
         const s = parseInt(row.querySelector(".e-s").value) || 0;
         const d = parseInt(row.querySelector(".e-d").value) || 0;
         const y = parseInt(row.querySelector(".e-y").value) || 0;
-
         if(!name || s === 0) return;
         if(!lessonTotals[name]) lessonTotals[name] = {s:0, d:0, y:0};
-        lessonTotals[name].s += s;
-        lessonTotals[name].d += d;
-        lessonTotals[name].y += y;
-
-        row.querySelector(".e-s").value = "";
-        row.querySelector(".e-d").value = "";
-        row.querySelector(".e-y").value = "";
-
+        lessonTotals[name].s += s; lessonTotals[name].d += d; lessonTotals[name].y += y;
+        row.querySelector(".e-s").value = ""; row.querySelector(".e-d").value = ""; row.querySelector(".e-y").value = "";
         renderResults();
         saveAll();
     }
 
     function renderResults() {
         const container = document.getElementById("cumulativeResults");
+        const totalArea = document.getElementById("generalTotalArea");
         container.innerHTML = "";
+        
+        let gS = 0, gD = 0, gY = 0;
+
         for(let lesson in lessonTotals) {
             const data = lessonTotals[lesson];
             const perc = data.s > 0 ? Math.round((data.d/data.s)*100) : 0;
-            container.innerHTML += `
-                <div class="stat-card">
-                    <div style="font-weight:bold; color:var(--p); font-size:11px;">${lesson}</div>
-                    <div class="stat-details">
-                        S:${data.s} D:${data.d} Y:${data.y} | 
-                        <span style="font-weight:bold; color:${perc>=70?'#27ae60':'#c0392b'}">%${perc}</span>
+            gS += data.s; gD += data.d; gY += data.y;
+
+            container.innerHTML += `<div class="stat-card">
+                <div style="font-weight:bold; color:var(--p)">${lesson}</div>
+                <div class="stat-details">S:${data.s} D:${data.d} Y:${data.y} | <b>%${perc}</b></div>
+            </div>`;
+        }
+
+        // Genel Toplam Hesaplama
+        if (gS > 0) {
+            const gPerc = Math.round((gD / gS) * 100);
+            totalArea.innerHTML = `
+                <div class="stat-card genel-toplam">
+                    <div style="font-weight:bold">GENEL TOPLAM</div>
+                    <div class="stat-details" style="color:white">
+                        S:${gS} D:${gD} Y:${gY}<br>
+                        <span style="font-size:12px">Genel Başarı: <b>%${gPerc}</b></span>
                     </div>
-                </div>
-            `;
+                </div>`;
+        } else {
+            totalArea.innerHTML = "";
         }
     }
 
@@ -187,36 +194,28 @@
             date: document.getElementById("manualDate").value,
             topTimes: Array.from(document.querySelectorAll(".top-time")).map(i => i.value),
             tasks: Array.from(document.querySelectorAll(".w-task")).map(i => i.value),
+            checks: Array.from(document.querySelectorAll(".w-check")).map(i => i.checked),
             totals: lessonTotals,
             lessonList: Array.from(document.querySelectorAll(".e-name")).map(i => i.value)
         };
-        localStorage.setItem("acamayDataV3", JSON.stringify(data));
+        localStorage.setItem("acamayVFinal", JSON.stringify(data));
         if(event && event.type === 'click') alert("Kaydedildi!");
     }
 
     function loadAll() {
-        const saved = localStorage.getItem("acamayDataV3");
-        if(!saved) {
-            ["Matematik","Türkçe","Fen Bil."].forEach(l => addRow(l));
-            return;
-        }
+        const saved = localStorage.getItem("acamayVFinal");
+        if(!saved) { ["Matematik","Türkçe","Fen Bil."].forEach(l => addRow(l)); return; }
         const data = JSON.parse(saved);
         document.getElementById("manualDate").value = data.date || "";
         const topTimes = document.querySelectorAll(".top-time");
         const tasks = document.querySelectorAll(".w-task");
+        const checks = document.querySelectorAll(".w-check");
         if(data.topTimes) data.topTimes.forEach((v, i) => { if(topTimes[i]) topTimes[i].value = v; });
         if(data.tasks) data.tasks.forEach((v, i) => { if(tasks[i]) tasks[i].value = v; });
+        if(data.checks) data.checks.forEach((v, i) => { if(checks[i]) checks[i].checked = v; });
         lessonTotals = data.totals || {};
         renderResults();
         if(data.lessonList) data.lessonList.forEach(l => addRow(l));
-    }
-
-    function resetTotals() {
-        if(confirm("Başarı verileri sıfırlansın mı?")) {
-            lessonTotals = {};
-            renderResults();
-            saveAll();
-        }
     }
 </script>
 </body>
