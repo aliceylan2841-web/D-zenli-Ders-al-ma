@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+için<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -144,9 +144,9 @@
     function addLessonStat(btn) {
         const row = btn.parentElement.parentElement;
         const name = row.querySelector(".e-name").value.trim();
-        const s = parseInt(row.querySelector(".e-s").value) || 0;
-        const d = parseInt(row.querySelector(".e-d").value) || 0;
-        const y = parseInt(row.querySelector(".e-y").value) || 0;
+        const soru sayısı = parseInt(row.querySelector(".e-s").value) || 0;
+        const doğru = parseInt(row.querySelector(".e-d").value) || 0;
+        const yanlış = parseInt(row.querySelector(".e-y").value) || 0;
         if(!name || s === 0) return;
         if(!lessonTotals[name]) lessonTotals[name] = {s:0, d:0, y:0};
         lessonTotals[name].s += s; lessonTotals[name].d += d; lessonTotals[name].y += y;
