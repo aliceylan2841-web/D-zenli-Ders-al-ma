@@ -3,53 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACAMAY Takip v10.2</title>
+    <title>ACAMAY Takip v10.2 Pro</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         :root { --p: #004a99; --s: #27ae60; --d: #c0392b; --w: #f39c12; --bg: #f4f7f9; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); margin: 0; padding: 5px; font-size: 10px; }
-        
         .logo-container { background: linear-gradient(135deg, #ffffff 0%, #e1e8ed 100%); border-radius: 10px; padding: 8px; text-align: center; margin-bottom: 8px; }
         .logo-container img { max-width: 150px; height: auto; }
-
         .tabs { display: flex; gap: 3px; margin-top: 8px; overflow-x: auto; }
         .tab-btn { flex: 1; padding: 10px 4px; border: none; border-radius: 6px; background: #d1d5db; font-weight: bold; font-size: 9px; white-space: nowrap; }
         .tab-btn.active { background: var(--p); color: white; }
-        
         .page { display: none; }
         .page.active { display: block; }
-
         .card { background: white; border-radius: 8px; padding: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #eee; padding: 4px 2px; text-align: center; }
         th { background: #f9fafb; font-size: 9px; }
-        
         input { border: 1px solid #d1d5db; border-radius: 3px; padding: 4px; font-size: 10px; width: 100%; }
         .btn { border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 10px; width: 100%; margin-top: 5px; }
-        
         .stat-card { background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 4px solid var(--p); }
-        
-        /* Arşiv ve Kılavuz Stili */
         .history-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; padding: 10px; }
-        .history-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--p); padding-bottom: 5px; margin-bottom: 8px; font-weight: bold; }
-        .history-lesson-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #eee; font-size: 9px; }
+        .history-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--p); padding-bottom: 5px; font-weight: bold; }
         
-        .guide-box { background: #fff8e1; border-left: 4px solid var(--w); padding: 8px; margin-bottom: 8px; border-radius: 4px; }
-        .guide-title { font-weight: bold; color: #856404; display: block; margin-bottom: 3px; }
+        /* Kılavuz Stili */
+        .guide-item { background: #fff8e1; border-left: 4px solid var(--w); padding: 8px; margin-bottom: 8px; border-radius: 4px; }
+        .guide-title { font-weight: bold; color: #856404; display: block; margin-bottom: 3px; font-size: 10px; }
     </style>
 </head>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Servis işçisi kayıtlı!'))
-        .catch(err => console.log('Hata:', err));
-    });
-  }
-</script>
-<link rel="manifest" href="manifest.json">
-
 <body>
 
 <div class="logo-container">
@@ -64,12 +45,10 @@
 
 <div id="program" class="page active">
     <div class="card">
-        <label><b>Aktif Çalışma Ayı:</b></label>
+        <label><b>Çalışma Ayı:</b></label>
         <input type="month" id="currentMonth" onchange="loadData()">
         <table id="weeklyTable" style="margin-top:10px">
-            <thead>
-                <tr><th style="width:15%">Gün</th><th>Ders 1</th><th>Ders 2</th><th>Ders 3</th><th style="width:12%">✓</th></tr>
-            </thead>
+            <thead><tr><th style="width:15%">Gün</th><th>Ders 1</th><th>Ders 2</th><th>Ders 3</th><th style="width:12%">✓</th></tr></thead>
             <tbody id="weeklyBody"></tbody>
         </table>
     </div>
@@ -79,51 +58,50 @@
 <div id="analiz" class="page">
     <div class="card">
         <table id="entryTable">
-            <thead><tr><th style="width:35%">Ders Adı</th><th>Soru</th><th>D</th><th>Y</th><th>Ekle</th></tr></thead>
+            <thead><tr><th style="width:35%">Ders</th><th>Soru</th><th>D</th><th>Y</th><th>+</th></tr></thead>
             <tbody id="entryBody"></tbody>
         </table>
         <button class="btn" style="background:var(--p); color:white" onclick="addRow()">+ Yeni Ders Ekle</button>
     </div>
-    <div class="card">
-        <div id="comparisonArea"></div>
-        <div id="cumulativeResults"></div>
-        <div id="generalTotalArea"></div>
-    </div>
+    <div id="cumulativeResults"></div>
+    <div id="generalTotalArea"></div>
 </div>
 
-<div id="arsiv" class="page">
-    <div class="card"><h3 style="margin-top:0">Geçmiş Ay Başarıları</h3><div id="historyList"></div></div>
-</div>
+<div id="arsiv" class="page"><div id="historyList"></div></div>
 
 <div id="bilgi" class="page">
     <div class="card">
-        <h3>📖 Kullanım Kılavuzu</h3>
+        <h3 style="margin-top:0">📖 Kullanım Kılavuzu</h3>
         
-        <div class="guide-box">
-            <span class="guide-title">📅 PROGRAM Sekmesi</span>
-            <span>Haftalık rutini planlamak içindir. Yazdığınız dersler ve attığınız "check" işaretleri, "Kaydet" butonuna basınca o aya özel olarak saklanır. Ay değiştikçe program da değişebilir.</span>
+        <div class="guide-item">
+            <span class="guide-title">📅 Program Yönetimi</span>
+            Seçili aya özel haftalık planınızı yapın. Kaydet butonu verileri mühürler.
         </div>
 
-        <div class="guide-box" style="border-left-color: var(--p);">
-            <span class="guide-title" style="color:var(--p)">📊 ANALİZ Sekmesi</span>
-            <span>Günlük çözülen soruların girildiği yerdir. "+" butonuna bastığınızda veriler ayın toplamına eklenir. Sistem, 4 yanlışın 1 doğruyu götürdüğü net hesabını otomatik yapar.</span>
+        <div class="guide-item" style="border-left-color: var(--p);">
+            <span class="guide-title" style="color:var(--p)">📊 Soru ve Net Takibi</span>
+            Analiz sekmesinde derslerinizi girip "+" butonuna basın. Sistem 4 yanlış 1 doğruyu götürür kuralıyla netlerinizi ay bazında toplar.
         </div>
 
-        <div class="guide-box" style="border-left-color: var(--s);">
-            <span class="guide-title" style="color:var(--s)">📜 ARŞİV Sekmesi</span>
-            <span>Bitirdiğiniz ayların karnesidir. Hangi ay, hangi dersten kaç net yaptığınızı ve genel başarı yüzdenizi burada toplu halde görebilirsiniz.</span>
+        <div class="guide-item" style="border-left-color: var(--s);">
+            <span class="guide-title" style="color:var(--s)">📜 Arşiv ve Kıyaslama</span>
+            Bitirdiğiniz ayları Arşiv'de görebilirsiniz. Eğer bir önceki ay verisi varsa, analiz kısmında otomatik karşılaştırma yapılır.
         </div>
 
-        <div class="guide-box" style="border-left-color: var(--d);">
-            <span class="guide-title" style="color:var(--d)">⚠️ Veri Güvenliği</span>
-            <span>Veriler telefonunuzun tarayıcı hafızasında saklanır. Tarayıcı geçmişini/çerezlerini silerseniz veriler gidebilir. Uygulama v10.2 sürümüdür.</span>
-        </div>
+        <hr>
+        <h3>📥 Veri Yedekleme (Kritik)</h3>
+        <p>Telefon değiştirirken veya uygulama silinirse verilerinizi geri yüklemek için bu butonları kullanın.</p>
+        <button class="btn" style="background:var(--p); color:white" onclick="exportData()">VERİLERİ DOSYAYA YEDEKLE</button>
+        <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+        <button class="btn" style="background:var(--s); color:white; margin-top:10px" onclick="document.getElementById('importFile').click()">YEDEKTEN GERİ YÜKLE</button>
         
-        <button class="btn" style="background:var(--d); color:white" onclick="clearAllData()">TÜM VERİLERİ SIFIRLA</button>
+        <hr>
+        <button class="btn" style="background:var(--d); color:white" onclick="clearAllData()">⚠️ TÜM VERİLERİ SIFIRLA</button>
     </div>
 </div>
 
 <script>
+    const STORAGE_KEY = "acamay_v10_pro";
     let db = { months: {} };
 
     window.onload = function() {
@@ -131,6 +109,9 @@
         document.getElementById("currentMonth").value = today.toISOString().substring(0, 7);
         initProgram();
         loadData();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(() => console.log("PWA Aktif"));
+        }
     };
 
     function openPage(id) {
@@ -143,8 +124,9 @@
 
     function initProgram() {
         const body = document.getElementById("weeklyBody");
+        const gunler = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
         body.innerHTML = "";
-        ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"].forEach((gun) => {
+        gunler.forEach(gun => {
             const row = body.insertRow();
             row.innerHTML = `<td style="font-weight:bold">${gun.substring(0,3)}</td><td><input type="text" class="w-task"></td><td><input type="text" class="w-task"></td><td><input type="text" class="w-task"></td><td><input type="checkbox" class="w-check"></td>`;
         });
@@ -173,39 +155,28 @@
     function renderResults() {
         const month = document.getElementById("currentMonth").value;
         const container = document.getElementById("cumulativeResults");
-        const totalArea = document.getElementById("generalTotalArea");
         container.innerHTML = "";
         if(!db.months[month] || !db.months[month].stats) return;
-        let gS = 0, gD = 0, gY = 0;
-        for(let lesson in db.months[month].stats) {
-            const data = db.months[month].stats[lesson];
-            const net = (data.d - (data.y/4)).toFixed(2);
-            gS += data.s; gD += data.d; gY += data.y;
-            container.innerHTML += `<div class="stat-card">
-                <div style="font-weight:bold; color:var(--p)">${lesson}</div>
-                <div style="display:grid; grid-template-columns: repeat(4, 1fr); font-size:9px">
-                    <div>Soru: <b>${data.s}</b></div><div>D: <b>${data.d}</b></div><div>Y: <b>${data.y}</b></div><div>Net: <b>${net}</b></div>
-                </div></div>`;
+        let gS=0, gD=0, gY=0;
+        for(let l in db.months[month].stats) {
+            const d = db.months[month].stats[l];
+            const n = (d.d - (d.y/4)).toFixed(2);
+            gS += d.s; gD += d.d; gY += d.y;
+            container.innerHTML += `<div class="stat-card"><b>${l}</b><br>Soru: ${d.s} | Net: ${n}</div>`;
         }
-        if(gS > 0) {
-            const gNet = (gD - (gY/4)).toFixed(2);
-            totalArea.innerHTML = `<div class="stat-card" style="background:var(--p); color:white; text-align:center"><b>${month} Toplam: ${gS} Soru | ${gNet} Net</b></div>`;
-        }
+        if(gS > 0) document.getElementById("generalTotalArea").innerHTML = `<div class="stat-card" style="background:var(--p); color:white; text-align:center">Genel: ${gS} Soru | ${(gD - (gY/4)).toFixed(2)} Net</div>`;
     }
 
     function renderHistory() {
         const list = document.getElementById("historyList");
         list.innerHTML = "";
         Object.keys(db.months).sort().reverse().forEach(m => {
-            let details = "";
-            let tD=0, tY=0;
+            let det = ""; let tD=0, tY=0;
             for(let l in db.months[m].stats) {
-                const d = db.months[m].stats[l];
-                const n = (d.d - (d.y/4)).toFixed(2);
-                tD += d.d; tY += d.y;
-                details += `<div class="history-lesson-row"><span>${l}</span><span>${d.s} S / ${n} Net</span></div>`;
+                const d = db.months[m].stats[l]; tD += d.d; tY += d.y;
+                det += `<div>${l}: ${d.s} S / ${(d.d - (d.y/4)).toFixed(2)} N</div>`;
             }
-            list.innerHTML += `<div class="history-card"><div class="history-header"><span>${m}</span><span>Genel Net: ${(tD - (tY/4)).toFixed(2)}</span></div>${details}</div>`;
+            list.innerHTML += `<div class="history-card"><div class="history-header"><span>${m}</span><span>Net: ${(tD - (tY/4)).toFixed(2)}</span></div>${det}</div>`;
         });
     }
 
@@ -217,28 +188,46 @@
             checks: Array.from(document.querySelectorAll(".w-check")).map(i => i.checked),
             lessonNames: Array.from(document.querySelectorAll(".e-name")).map(i => i.value)
         };
-        localStorage.setItem("acamayV10", JSON.stringify(db));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
     }
 
     function loadData() {
-        const saved = localStorage.getItem("acamayV10");
+        const saved = localStorage.getItem(STORAGE_KEY);
         if(saved) db = JSON.parse(saved);
         const month = document.getElementById("currentMonth").value;
-        const monthData = db.months[month];
+        const mData = db.months[month];
         document.querySelectorAll(".w-task").forEach(i => i.value = "");
         document.querySelectorAll(".w-check").forEach(i => i.checked = false);
         document.getElementById("entryBody").innerHTML = "";
-        if(monthData && monthData.program) {
-            const tasks = document.querySelectorAll(".w-task");
-            const checks = document.querySelectorAll(".w-check");
-            monthData.program.tasks.forEach((v, i) => { if(tasks[i]) tasks[i].value = v; });
-            monthData.program.checks.forEach((v, i) => { if(checks[i]) checks[i].checked = v; });
-            monthData.program.lessonNames.forEach(l => addRow(l));
+        if(mData && mData.program) {
+            mData.program.tasks.forEach((v, i) => { if(document.querySelectorAll(".w-task")[i]) document.querySelectorAll(".w-task")[i].value = v; });
+            mData.program.checks.forEach((v, i) => { if(document.querySelectorAll(".w-check")[i]) document.querySelectorAll(".w-check")[i].checked = v; });
+            mData.program.lessonNames.forEach(l => addRow(l));
         } else { ["Matematik", "Türkçe", "Fen"].forEach(l => addRow(l)); }
         renderResults();
     }
 
-    function clearAllData() { if(confirm("Tüm kayıtlar silinecek. Emin misiniz?")) { localStorage.removeItem("acamayV10"); location.reload(); } }
+    function exportData() {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if(!data) return alert("Veri bulunamadı!");
+        const blob = new Blob([data], {type: "application/json"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `acamay_pro_yedek.json`;
+        a.click();
+    }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            localStorage.setItem(STORAGE_KEY, e.target.result);
+            alert("Yedek başarıyla yüklendi!"); location.reload();
+        };
+        reader.readAsText(file);
+    }
+
+    function clearAllData() { if(confirm("Tüm kayıtlar silinsin mi?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 </script>
 </body>
 </html>
