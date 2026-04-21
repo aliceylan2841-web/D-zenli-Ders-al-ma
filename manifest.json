@@ -1,6 +1,6 @@
 {
   "name": "ACAMAY LGS Takip Sistemi",
-  "short_name": "ACAMAY",
+  "short_name": "Planlı Ders Çalışma ",
   "description": "LGS hazırlık süreci için soru takibi ve analiz uygulaması.",
   "start_url": "./index.html",
   "display": "standalone",
