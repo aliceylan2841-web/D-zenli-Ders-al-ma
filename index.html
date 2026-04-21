@@ -3,32 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACAMAY Takip v10.2 Pro</title>
-    <link rel="manifest" href="manifest.json">
+    <title>ACAMAY Takip v11.0 Pro</title>
     <style>
         :root { --p: #004a99; --s: #27ae60; --d: #c0392b; --w: #f39c12; --bg: #f4f7f9; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg); margin: 0; padding: 5px; font-size: 10px; }
+        body { background: var(--bg); margin: 0; padding: 5px; font-size: 10px; overflow-x: hidden; }
         .logo-container { background: linear-gradient(135deg, #ffffff 0%, #e1e8ed 100%); border-radius: 10px; padding: 8px; text-align: center; margin-bottom: 8px; }
-        .logo-container img { max-width: 150px; height: auto; }
+        .logo-container img { max-width: 160px; height: auto; }
         .tabs { display: flex; gap: 3px; margin-top: 8px; overflow-x: auto; }
         .tab-btn { flex: 1; padding: 10px 4px; border: none; border-radius: 6px; background: #d1d5db; font-weight: bold; font-size: 9px; white-space: nowrap; }
         .tab-btn.active { background: var(--p); color: white; }
         .page { display: none; }
         .page.active { display: block; }
         .card { background: white; border-radius: 8px; padding: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th, td { border: 1px solid #eee; padding: 4px 2px; text-align: center; }
         th { background: #f9fafb; font-size: 9px; }
-        input { border: 1px solid #d1d5db; border-radius: 3px; padding: 4px; font-size: 10px; width: 100%; }
+        input { border: 1px solid #d1d5db; border-radius: 3px; padding: 4px; font-size: 10px; width: 100%; outline: none; }
         .btn { border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 10px; width: 100%; margin-top: 5px; }
         .stat-card { background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 4px solid var(--p); }
-        .history-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; padding: 10px; }
-        .history-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--p); padding-bottom: 5px; font-weight: bold; }
-        
-        /* Kılavuz Stili */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 5px; }
+        .stat-val { font-weight: bold; font-size: 10px; display: block; }
+        .stat-lbl { font-size: 8px; color: #777; }
         .guide-item { background: #fff8e1; border-left: 4px solid var(--w); padding: 8px; margin-bottom: 8px; border-radius: 4px; }
-        .guide-title { font-weight: bold; color: #856404; display: block; margin-bottom: 3px; font-size: 10px; }
     </style>
 </head>
 <body>
@@ -45,8 +42,7 @@
 
 <div id="program" class="page active">
     <div class="card">
-        <label><b>Çalışma Ayı:</b></label>
-        <input type="month" id="currentMonth" onchange="loadData()">
+        <input type="month" id="currentMonth" style="text-align:center; font-weight:bold" onchange="loadDataByMonth()">
         <table id="weeklyTable" style="margin-top:10px">
             <thead><tr><th style="width:15%">Gün</th><th>Ders 1</th><th>Ders 2</th><th>Ders 3</th><th style="width:12%">✓</th></tr></thead>
             <tbody id="weeklyBody"></tbody>
@@ -58,10 +54,10 @@
 <div id="analiz" class="page">
     <div class="card">
         <table id="entryTable">
-            <thead><tr><th style="width:35%">Ders</th><th>Soru</th><th>D</th><th>Y</th><th>+</th></tr></thead>
+            <thead><tr><th style="width:35%">Ders Adı</th><th>Soru</th><th>D</th><th>Y</th><th style="width:15%">+</th></tr></thead>
             <tbody id="entryBody"></tbody>
         </table>
-        <button class="btn" style="background:var(--p); color:white" onclick="addRow()">+ Yeni Ders Ekle</button>
+        <button class="btn" style="background:var(--p); color:white; margin-top:8px" onclick="addRow()">+ Yeni Ders Ekle</button>
     </div>
     <div id="cumulativeResults"></div>
     <div id="generalTotalArea"></div>
@@ -71,55 +67,43 @@
 
 <div id="bilgi" class="page">
     <div class="card">
-        <h3 style="margin-top:0">📖 Kullanım Kılavuzu</h3>
-        
-        <div class="guide-item">
-            <span class="guide-title">📅 Program Yönetimi</span>
-            Seçili aya özel haftalık planınızı yapın. Kaydet butonu verileri mühürler.
-        </div>
-
-        <div class="guide-item" style="border-left-color: var(--p);">
-            <span class="guide-title" style="color:var(--p)">📊 Soru ve Net Takibi</span>
-            Analiz sekmesinde derslerinizi girip "+" butonuna basın. Sistem 4 yanlış 1 doğruyu götürür kuralıyla netlerinizi ay bazında toplar.
-        </div>
-
-        <div class="guide-item" style="border-left-color: var(--s);">
-            <span class="guide-title" style="color:var(--s)">📜 Arşiv ve Kıyaslama</span>
-            Bitirdiğiniz ayları Arşiv'de görebilirsiniz. Eğer bir önceki ay verisi varsa, analiz kısmında otomatik karşılaştırma yapılır.
-        </div>
-
+        <h3>📖 Kullanım Kılavuzu</h3>
+        <div class="guide-item"><b style="color:#856404">📅 Program:</b> Aylık seçiminizi yapın ve haftalık planınızı kaydedin.</div>
+        <div class="guide-item" style="border-left-color:var(--p)"><b style="color:var(--p)">📊 Analiz:</b> Soru, Doğru ve Yanlış sayılarını girip "+" butonuna basarak toplamlarınıza ekleyin. (D - Y/4) formülüyle netleriniz hesaplanır.</div>
+        <div class="guide-item" style="border-left-color:var(--s)"><b style="color:var(--s)">📜 Arşiv:</b> Her ayın sonunda verileriniz bu sekmede karşılaştırmalı olarak saklanır.</div>
         <hr>
-        <h3>📥 Veri Yedekleme (Kritik)</h3>
-        <p>Telefon değiştirirken veya uygulama silinirse verilerinizi geri yüklemek için bu butonları kullanın.</p>
-        <button class="btn" style="background:var(--p); color:white" onclick="exportData()">VERİLERİ DOSYAYA YEDEKLE</button>
+        <h3>📥 Yedekleme</h3>
+        <button class="btn" style="background:var(--p); color:white" onclick="exportData()">VERİLERİ YEDEKLE</button>
         <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-        <button class="btn" style="background:var(--s); color:white; margin-top:10px" onclick="document.getElementById('importFile').click()">YEDEKTEN GERİ YÜKLE</button>
-        
-        <hr>
-        <button class="btn" style="background:var(--d); color:white" onclick="clearAllData()">⚠️ TÜM VERİLERİ SIFIRLA</button>
+        <button class="btn" style="background:var(--s); color:white; margin-top:10px" onclick="document.getElementById('importFile').click()">YEDEKTEN YÜKLE</button>
+        <button class="btn" style="background:var(--d); color:white; margin-top:10px" onclick="clearData()">⚠️ VERİLERİ SIFIRLA</button>
     </div>
 </div>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Service Worker Kayıtlı!'))
+      .catch(err => console.log('Hata:', err));
+  });
+}
 
 <script>
-    const STORAGE_KEY = "acamay_v10_pro";
+    const STORAGE_KEY = "acamay_v11_pro";
     let db = { months: {} };
 
     window.onload = function() {
         const today = new Date();
         document.getElementById("currentMonth").value = today.toISOString().substring(0, 7);
         initProgram();
-        loadData();
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').then(() => console.log("PWA Aktif"));
-        }
+        loadDataByMonth();
     };
 
     function openPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        event.currentTarget.classList.add('active');
-        if(id === 'arsiv') renderHistory();
+        if(event) event.currentTarget.classList.add('active');
+        if(id === 'arsiv') renderArchive();
     }
 
     function initProgram() {
@@ -158,25 +142,22 @@
         container.innerHTML = "";
         if(!db.months[month] || !db.months[month].stats) return;
         let gS=0, gD=0, gY=0;
-        for(let l in db.months[month].stats) {
-            const d = db.months[month].stats[l];
-            const n = (d.d - (d.y/4)).toFixed(2);
-            gS += d.s; gD += d.d; gY += d.y;
-            container.innerHTML += `<div class="stat-card"><b>${l}</b><br>Soru: ${d.s} | Net: ${n}</div>`;
+        for(let lesson in db.months[month].stats) {
+            const data = db.months[month].stats[lesson];
+            const net = (data.d - (data.y/4)).toFixed(2);
+            gS += data.s; gD += data.d; gY += data.y;
+            container.innerHTML += `<div class="stat-card"><b>${lesson}</b><div class="stat-grid"><div><span class="stat-lbl">Soru</span><span class="stat-val">${data.s}</span></div><div><span class="stat-lbl" style="color:var(--s)">Doğru</span><span class="stat-val">${data.d}</span></div><div><span class="stat-lbl" style="color:var(--d)">Yanlış</span><span class="stat-val">${data.y}</span></div><div><span class="stat-lbl" style="color:var(--p)">Net</span><span class="stat-val">${net}</span></div></div></div>`;
         }
-        if(gS > 0) document.getElementById("generalTotalArea").innerHTML = `<div class="stat-card" style="background:var(--p); color:white; text-align:center">Genel: ${gS} Soru | ${(gD - (gY/4)).toFixed(2)} Net</div>`;
+        if(gS > 0) document.getElementById("generalTotalArea").innerHTML = `<div class="stat-card" style="background:var(--p); color:white; border:none"><div style="text-align:center; font-weight:bold; margin-bottom:5px">AYLIK GENEL TOPLAM</div><div class="stat-grid"><div><span class="stat-lbl" style="color:#ddd">Soru</span><span class="stat-val">${gS}</span></div><div><span class="stat-lbl" style="color:#afffaf">Doğru</span><span class="stat-val">${gD}</span></div><div><span class="stat-lbl" style="color:#ffbaba">Yanlış</span><span class="stat-val">${gY}</span></div><div><span class="stat-lbl" style="color:#fff">Net</span><span class="stat-val">${(gD - (gY/4)).toFixed(2)}</span></div></div></div>`;
     }
 
-    function renderHistory() {
+    function renderArchive() {
         const list = document.getElementById("historyList");
         list.innerHTML = "";
         Object.keys(db.months).sort().reverse().forEach(m => {
-            let det = ""; let tD=0, tY=0;
-            for(let l in db.months[m].stats) {
-                const d = db.months[m].stats[l]; tD += d.d; tY += d.y;
-                det += `<div>${l}: ${d.s} S / ${(d.d - (d.y/4)).toFixed(2)} N</div>`;
-            }
-            list.innerHTML += `<div class="history-card"><div class="history-header"><span>${m}</span><span>Net: ${(tD - (tY/4)).toFixed(2)}</span></div>${det}</div>`;
+            let tS=0, tD=0, tY=0;
+            for(let l in db.months[m].stats) { const d = db.months[m].stats[l]; tS+=d.s; tD+=d.d; tY+=d.y; }
+            list.innerHTML += `<div class="card"><b>📅 ${m} Özeti</b><hr><div class="stat-grid"><div><span class="stat-lbl">Soru</span><span class="stat-val">${tS}</span></div><div><span class="stat-lbl">Doğru</span><span class="stat-val">${tD}</span></div><div><span class="stat-lbl">Yanlış</span><span class="stat-val">${tY}</span></div><div><span class="stat-lbl">Net</span><span class="stat-val">${(tD-(tY/4)).toFixed(2)}</span></div></div></div>`;
         });
     }
 
@@ -191,7 +172,7 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
     }
 
-    function loadData() {
+    function loadDataByMonth() {
         const saved = localStorage.getItem(STORAGE_KEY);
         if(saved) db = JSON.parse(saved);
         const month = document.getElementById("currentMonth").value;
@@ -202,32 +183,27 @@
         if(mData && mData.program) {
             mData.program.tasks.forEach((v, i) => { if(document.querySelectorAll(".w-task")[i]) document.querySelectorAll(".w-task")[i].value = v; });
             mData.program.checks.forEach((v, i) => { if(document.querySelectorAll(".w-check")[i]) document.querySelectorAll(".w-check")[i].checked = v; });
-            mData.program.lessonNames.forEach(l => addRow(l));
+            if(mData.program.lessonNames) mData.program.lessonNames.forEach(l => addRow(l));
         } else { ["Matematik", "Türkçe", "Fen"].forEach(l => addRow(l)); }
         renderResults();
     }
 
     function exportData() {
         const data = localStorage.getItem(STORAGE_KEY);
-        if(!data) return alert("Veri bulunamadı!");
         const blob = new Blob([data], {type: "application/json"});
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = `acamay_pro_yedek.json`;
+        a.download = `acamay_yedek.json`;
         a.click();
     }
 
-    function importData(event) {
-        const file = event.target.files[0];
+    function importData(e) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            localStorage.setItem(STORAGE_KEY, e.target.result);
-            alert("Yedek başarıyla yüklendi!"); location.reload();
-        };
-        reader.readAsText(file);
+        reader.onload = function(ev) { localStorage.setItem(STORAGE_KEY, ev.target.result); location.reload(); };
+        reader.readAsText(e.target.files[0]);
     }
 
-    function clearAllData() { if(confirm("Tüm kayıtlar silinsin mi?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
+    function clearData() { if(confirm("Tüm veriler silinsin mi?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 </script>
 </body>
 </html>
