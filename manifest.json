@@ -1,6 +1,6 @@
 {
   "name": "ACAMAY Takip Sistemi",
-  "short_name": "ACAMAY",
+  "short_name": "Düzenli Ders Çalışma",
   "description": "LGS Gelişim ve Takip Sistemi",
   "start_url": "index.html",
   "display": "standalone",
