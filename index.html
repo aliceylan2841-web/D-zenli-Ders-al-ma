@@ -1,221 +1,1930 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACAMAY Takip v11.0 Pro</title>
-    <style>
-        :root { --p: #004a99; --s: #27ae60; --d: #c0392b; --w: #f39c12; --bg: #f4f7f9; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg); margin: 0; padding: 5px; font-size: 10px; overflow-x: hidden; }
-        .logo-container { background: linear-gradient(135deg, #ffffff 0%, #e1e8ed 100%); border-radius: 10px; padding: 8px; text-align: center; margin-bottom: 8px; }
-        .logo-container img { max-width: 160px; height: auto; }
-        .tabs { display: flex; gap: 3px; margin-top: 8px; overflow-x: auto; }
-        .tab-btn { flex: 1; padding: 10px 4px; border: none; border-radius: 6px; background: #d1d5db; font-weight: bold; font-size: 9px; white-space: nowrap; }
-        .tab-btn.active { background: var(--p); color: white; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .card { background: white; border-radius: 8px; padding: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th, td { border: 1px solid #eee; padding: 4px 2px; text-align: center; }
-        th { background: #f9fafb; font-size: 9px; }
-        input { border: 1px solid #d1d5db; border-radius: 3px; padding: 4px; font-size: 10px; width: 100%; outline: none; }
-        .btn { border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 10px; width: 100%; margin-top: 5px; }
-        .stat-card { background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 4px solid var(--p); }
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 5px; }
-        .stat-val { font-weight: bold; font-size: 10px; display: block; }
-        .stat-lbl { font-size: 8px; color: #777; }
-    
-        .guide-item { background: #fff8e1; border-left: 4px solid var(--w); padding: 8px; margin-bottom: 8px; border-radius: 4px; }
-       
-    </style>
-</head>
-<link rel="manifest" href="manifest.json">
- <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Servis işçisi kayıtlı!'))
-        .catch(err => console.log('Kayıt hatası:', err));
-    });
-  }
-</script>   
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Planlı Ders Çalışma Pro — YKS & LGS</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0d1b2a;
+  --blue: #1565c0;
+  --blue2: #1976d2;
+  --cyan: #00b4d8;
+  --green: #00b894;
+  --red: #e53935;
+  --amber: #ffb300;
+  --purple: #7c3aed;
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --text: #0d1b2a;
+  --muted: #6b7a8d;
+  --border: #dde3ec;
+  --shadow: 0 2px 12px rgba(13,27,42,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: 'Nunito', sans-serif; font-size: 12px; min-height: 100vh; overflow-x: hidden; }
+
+/* ── TOP BAR ── */
+.topbar {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a2d45 100%);
+  padding: 6px 8px 0;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+}
+.topbar-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.topbar-head img { height: 38px; }
+.app-title { color: #fff; font-size: 15px; font-weight: 900; letter-spacing: 0.5px; line-height: 1.2; }
+.app-sub { color: var(--cyan); font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+.badge-row { display: flex; gap: 5px; flex-wrap: wrap; }
+.badge { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 2px 8px; color: #aac8ff; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
+.badge.green { color: #5fffb8; }
+
+/* ── DİJİTAL SAAT ── */
+.digital-clock-bar {
+  background: rgba(0,0,0,0.3);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 2px 4px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.digital-clock {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-shadow: 0 0 15px rgba(0,180,216,0.7);
+}
+.clock-date {
+  font-size: 9px; color: rgba(255,255,255,0.55); font-weight: 700;
+  letter-spacing: 0.5px; text-align: right; line-height: 1.5;
+}
+.alarm-mini-btn {
+  background: rgba(255,179,0,0.18);
+  border: 1.5px solid var(--amber);
+  border-radius: 8px;
+  color: var(--amber);
+  padding: 4px 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 10px; font-weight: 800;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+}
+.alarm-mini-btn:active { background: rgba(255,179,0,0.35); }
+
+/* PROFIL */
+.profil-bar {
+  background: rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 8px;
+  display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+}
+.profil-inp {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 15px;
+  color: #fff;
+  padding: 2px 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  outline: none;
+  flex: 1;
+  min-width: 80px;
+}
+.profil-inp::placeholder { color: rgba(255,255,255,0.4); }
+.profil-inp:focus { border-color: var(--cyan); background: rgba(255,255,255,0.15); }
+
+/* ── SEKMELER ── */
+.tabs { display: flex; gap: 2px; padding: 0; overflow-x: auto; }
+.tab-btn {
+  flex: 1; background: transparent; border: none; border-bottom: 3px solid transparent;
+  color: rgba(255,255,255,0.5); padding: 8px 3px; font-family: 'Nunito', sans-serif;
+  font-size: 9.5px; font-weight: 800; cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.tab-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+.tab-btn:hover:not(.active) { color: rgba(255,255,255,0.8); }
+
+/* ── PAGES ── */
+.page { display: none; padding: 10px 10px 80px; }
+.page.active { display: block; }
+
+/* ── CARDS ── */
+.card { background: var(--card); border-radius: 14px; padding: 12px; margin-bottom: 10px; box-shadow: var(--shadow); }
+.card-title { font-size: 11px; font-weight: 900; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+/* ── DERS LİSTESİ ── */
+.dersler-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 6px; }
+.ders-chip {
+  background: linear-gradient(135deg, #e8f4fd, #dbeafe);
+  border: 1.5px solid #bee3f8;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ders-chip .del-btn { color: var(--red); background: none; border: none; cursor: pointer; font-size: 12px; line-height: 1; }
+.ders-add-row { display: flex; gap: 6px; margin-top: 8px; }
+.ders-input {
+  flex: 1;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+  color: var(--text);
+}
+.ders-input:focus { border-color: var(--blue2); }
+
+/* ── PROGRAM SAYFASI ── */
+.month-header {
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  color: white; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px;
+}
+.month-label { font-size: 14px; font-weight: 900; }
+.month-sub { font-size: 9px; color: rgba(255,255,255,0.7); font-weight: 600; margin-top: 1px; }
+
+/* Global süre */
+.global-time-bar {
+  background: #fff8e1;
+  border: 1.5px solid var(--amber);
+  border-radius: 10px;
+  padding: 6px 10px;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; flex-wrap: wrap;
+}
+.global-time-bar label { font-size: 10px; font-weight: 800; color: #b45309; white-space: nowrap; }
+.global-time-inp {
+  background: #fff;
+  border: 1.5px solid var(--amber);
+  border-radius: 6px;
+  padding: 3px 4px;
+  width: 48px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: #b45309;
+  outline: none;
+}
+.apply-time-btn {
+  background: var(--amber); color: #fff; border: none; border-radius: 6px;
+  padding: 5px 10px; font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 800;
+  cursor: pointer; white-space: nowrap;
+}
+
+/* Haftalık tablo */
+.week-table-wrap { overflow-x: auto; }
+.week-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; }
+.week-table th { background: var(--navy); color: white; padding: 6px 4px; font-size: 9px; font-weight: 600; text-align: center; letter-spacing: 0.5px; }
+.week-table th:first-child { border-radius: 8px 0 0 8px; }
+.week-table th:last-child { border-radius: 0 8px 8px 0; }
+.week-row td { background: #f8fafc; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+.week-row td:first-child { border-left: 1px solid #eee; border-radius: 8px 0 0 8px; background: linear-gradient(135deg, var(--blue), var(--blue2)); color: white; font-weight: 600; font-size: 6px; text-align: center; padding: 4px 2px; min-width: 20px; }
+.week-row td:last-child { border-right: 1px solid #eee; border-radius: 0 8px 8px 0; }
+.week-row.done td { background: #e8fff4 !important; }
+.week-row.done td:first-child { background: linear-gradient(135deg, var(--green), #00cfa8) !important; }
+
+.cell-wrap { padding: 3px; }
+.cell-time {
+  background: #fff8e1;
+  border: 1px solid #fde68a;
+  border-radius: 3px;
+  padding: 1px 2px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  width: 100%;
+  text-align: center;
+  color: #92400e;
+  outline: none;
+  margin-bottom: 3px;
+  height: 12px;
+}
+.cell-ders {
+  background: #fff;
+  border: 1.5px solid #dbeafe;
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  width: 100%;
+  outline: none;
+  color: var(--text);
+  cursor: pointer;
+  min-height: 34px;
+}
+.cell-ders:focus { border-color: var(--blue2); }
+
+/* Ders öneri popup */
+.ders-popup {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  background: white;
+  border-top: 3px solid var(--blue2);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -8px 32px rgba(21,101,192,0.20);
+  z-index: 9999;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.ders-popup-header {
+  position: sticky; top: 0;
+  background: var(--navy);
+  padding: 8px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ders-popup-title { color: var(--cyan); font-size: 11px; font-weight: 900; letter-spacing: 1px; }
+.ders-popup-close { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 0 4px; }
+.ders-popup-item {
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--text);
+  border-bottom: 1px solid #f0f4f8;
+  transition: background .1s;
+}
+.ders-popup-item:last-child { border-bottom: none; }
+.ders-popup-item:active { background: #dbeafe; color: var(--blue); }
+
+.check-td { text-align: center; padding: 4px; }
+.done-check { width: 20px; height: 20px; accent-color: var(--green); cursor: pointer; }
+
+/* Kaydet / temizle */
+.action-bar { display: flex; gap: 6px; margin-top: 6px; }
+.btn-primary { flex: 1; background: linear-gradient(135deg, var(--blue), var(--blue2)); color: white; border: none; border-radius: 10px; padding: 12px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; }
+.btn-danger { background: linear-gradient(135deg, var(--red), #ef5350); color: white; border: none; border-radius: 10px; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; }
+.btn-amber { background: linear-gradient(135deg, var(--amber), #ffa000); color: white; border: none; border-radius: 10px; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; }
+.btn-green { background: linear-gradient(135deg, var(--green), #00a87e); color: white; border: none; border-radius: 10px; padding: 12px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; flex: 1; }
+.btn-purple { background: linear-gradient(135deg, var(--purple), #9f67ff); color: white; border: none; border-radius: 10px; padding: 12px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; flex: 1; }
+
+/* ── ANALİZ ── */
+.analiz-table { width: 100%; border-collapse: collapse; }
+.analiz-table th { background: var(--navy); color: white; padding: 7px 4px; font-size: 9px; font-weight: 800; text-align: center; }
+.analiz-table th:first-child { border-radius: 8px 0 0 8px; }
+.analiz-table th:last-child { border-radius: 0 8px 8px 0; }
+.analiz-table td { padding: 3px 2px; border-bottom: 1px solid #f0f4f8; vertical-align: middle; }
+.a-ders-inp { border: 1.5px solid #dbeafe; border-radius: 6px; padding: 6px 6px; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700; width: 100%; outline: none; color: var(--text); cursor: pointer; }
+.a-ders-inp:focus { border-color: var(--blue2); }
+.a-num-inp { border: 1.5px solid #e2e8f0; border-radius: 6px; padding: 5px 2px; font-family: 'Space Mono', monospace; font-size: 11px; width: 100%; outline: none; color: var(--text); text-align: center; }
+.a-num-inp:focus { border-color: var(--blue2); }
+.add-stat-btn { background: var(--green); color: white; border: none; border-radius: 6px; padding: 6px 8px; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; width: 100%; }
+.del-row-btn { background: var(--red); color: white; border: none; border-radius: 6px; padding: 6px 8px; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; width: 100%; }
+
+.stat-card { border-radius: 10px; padding: 10px; margin-bottom: 8px; border-left: 4px solid var(--blue2); background: #f8fafc; }
+.stat-card-title { font-size: 12px; font-weight: 900; color: var(--blue); margin-bottom: 6px; }
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; }
+.sg-item { text-align: center; }
+.sg-lbl { font-size: 8px; color: var(--muted); font-weight: 700; display: block; }
+.sg-val { font-size: 13px; font-weight: 900; display: block; color: var(--text); }
+.sg-val.green { color: var(--green); }
+.sg-val.red { color: var(--red); }
+.sg-val.blue { color: var(--blue); }
+
+.total-card { background: linear-gradient(135deg, var(--navy), #1a2d45); border-radius: 12px; padding: 12px; margin-top: 10px; color: white; }
+.total-card-title { text-align: center; font-size: 13px; font-weight: 900; color: var(--cyan); margin-bottom: 8px; letter-spacing: 1px; }
+
+/* ── ARŞİV ── */
+.arsiv-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; box-shadow: var(--shadow); border-top: 4px solid var(--blue2); }
+.arsiv-month { font-size: 13px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
+
+/* ── AYARLAR ── */
+.settings-section { margin-bottom: 14px; }
+.settings-label { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+/* ── YARDIM ── */
+.guide-item { background: #fff8e1; border-left: 4px solid var(--amber); padding: 9px 10px; margin-bottom: 8px; border-radius: 8px; font-size: 11px; line-height: 1.6; }
+.guide-item b { color: #92400e; }
+
+/* Target hedef banner */
+.target-bar { background: linear-gradient(135deg, var(--purple), #9f67ff); border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.target-emoji { font-size: 22px; }
+.target-text { color: white; }
+.target-title { font-size: 13px; font-weight: 900; }
+.target-sub { font-size: 10px; color: rgba(255,255,255,0.75); }
+
+.hedef-btn-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.hedef-btn { background: #f0f4f8; border: 2px solid var(--border); border-radius: 8px; padding: 6px 12px; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; color: var(--muted); transition: all .2s; }
+.hedef-btn.active { background: var(--purple); border-color: var(--purple); color: white; }
+
+.progress-bar-wrap { height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-top: 4px; }
+.progress-bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--cyan), var(--blue2)); transition: width .5s; }
+
+/* ══════════════════════════════════
+   OKUL DERS PROGRAMI — Yeni Tasarım
+   ══════════════════════════════════ */
+.okul-mode-bar {
+  background: linear-gradient(135deg, #0a3d62, #1e5799);
+  border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.okul-mode-bar label { color: white; font-size: 9px; font-weight: 600; white-space: nowrap; }
+.toggle-switch {
+  position: relative; width: 35px; height: 18px; cursor: pointer;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.2); border-radius: 24px; transition: .3s;
+}
+.toggle-slider:before {
+  content: ""; position: absolute; height: 18px; width: 18px;
+  left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s;
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--cyan); }
+.toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+.okul-info { color: rgba(255,255,255,0.7); font-size: 10px; }
+
+/* Okul programı — günler üstte (yatay tablo) */
+.okul-table-wrap { overflow-x: auto; margin-bottom: 7px; }
+.okul-table { border-collapse: separate; border-spacing: 3px; min-width: 100%; }
+.okul-table th.gun-th {
+  background: linear-gradient(135deg, var(--navy), #1a2d45);
+  color: var(--cyan); padding: 6px 4px; font-size: 7px; font-weight: 600;
+  border-radius: 8px; text-align: center; letter-spacing: 0.5px; min-width: 70px;
+}
+.okul-table th.gun-th:first-child { min-width: 50px; }
+.okul-table th.saat-lbl {
+  background: #f0f4f8; color: var(--muted); padding: 5px 4px;
+  font-size: 7px; font-weight: 600; border-radius: 6px; text-align: center;
+}
+.okul-cell-inp {
+  background: #fff;
+  border: 1.5px solid #dbeafe;
+  border-radius: 8px;
+  padding: 8px 4px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  width: 100%;
+  min-width: 68px;
+  text-align: center;
+  outline: none;
+  color: var(--text);
+  cursor: pointer;
+  min-height: 36px;
+}
+.okul-cell-inp:focus { border-color: var(--blue2); background: #f0f8ff; }
+.okul-saat-inp {
+  background: #fff8e1;
+  border: 1px solid #fde68a;
+  border-radius: 5px;
+  padding: 2px 3px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  width: 100%;
+  text-align: center;
+  color: #92400e;
+  outline: none;
+  height: 15px;
+  display: block;
+  margin-bottom: 3px;
+}
+.okul-row-label {
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  color: white; font-weight: 600; font-size: 10px;
+  text-align: center; padding: 6px 3px; border-radius: 8px;
+}
+
+/* ══════════════════════════
+   ÇALAR SAAT — Alarm Modal
+   ══════════════════════════ */
+.alarm-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 10000;
+  align-items: flex-end; justify-content: center;
+}
+.alarm-overlay.open { display: flex; }
+.alarm-sheet {
+  background: white; border-radius: 20px 20px 0 0;
+  padding: 20px 16px 30px; width: 100%; max-width: 480px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.3);
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.alarm-sheet-title { font-size: 15px; font-weight: 900; color: var(--navy); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.alarm-list { margin-bottom: 14px; }
+.alarm-item {
+  background: #f8fafc; border-radius: 10px; padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+  border-left: 4px solid var(--cyan);
+}
+.alarm-time-lbl { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: var(--navy); min-width: 60px; }
+.alarm-desc { flex: 1; font-size: 11px; font-weight: 700; color: var(--muted); }
+.alarm-del { background: none; border: none; color: var(--red); font-size: 18px; cursor: pointer; }
+.alarm-toggle { accent-color: var(--green); width: 20px; height: 20px; cursor: pointer; }
+.alarm-add-form { background: #f0f4f8; border-radius: 12px; padding: 12px; }
+.alarm-add-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+.alarm-add-row label { font-size: 10px; font-weight: 800; color: var(--muted); white-space: nowrap; }
+.alarm-inp-time {
+  background: white; border: 2px solid var(--border); border-radius: 8px;
+  padding: 8px 10px; font-family: 'Space Mono', monospace;
+  font-size: 16px; font-weight: 700; color: var(--navy); outline: none;
+}
+.alarm-inp-time:focus { border-color: var(--blue2); }
+.alarm-inp-desc {
+  flex: 1; background: white; border: 2px solid var(--border); border-radius: 8px;
+  padding: 8px 10px; font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 700; color: var(--text); outline: none;
+  min-width: 120px;
+}
+.alarm-inp-desc:focus { border-color: var(--blue2); }
+.alarm-close-btn {
+  background: #f0f4f8; border: none; border-radius: 10px; padding: 10px 14px;
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; color: var(--muted);
+}
+
+/* Alarm çalma overlay */
+.alarm-ring-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(13,27,42,0.95); z-index: 99999;
+  flex-direction: column; align-items: center; justify-content: center;
+}
+.alarm-ring-overlay.ringing { display: flex; animation: ringPulse 1s infinite; }
+@keyframes ringPulse { 0%,100%{background:rgba(13,27,42,0.95)} 50%{background:rgba(21,101,192,0.95)} }
+.alarm-ring-clock { font-family: 'Space Mono', monospace; font-size: 52px; font-weight: 700; color: var(--cyan); text-shadow: 0 0 30px rgba(0,180,216,0.8); margin-bottom: 10px; }
+.alarm-ring-label { font-size: 18px; font-weight: 900; color: white; margin-bottom: 30px; }
+.alarm-ring-stop { background: var(--red); color: white; border: none; border-radius: 50%; width: 70px; height: 70px; font-size: 28px; cursor: pointer; box-shadow: 0 0 30px rgba(229,57,53,0.6); }
+
+/* ══════════════════════════════════
+   SORU PLANI — Planlı Çalışma
+   ══════════════════════════════════ */
+.plan-hero {
+  background: linear-gradient(135deg, #0d1b2a, #1e3a5f);
+  border-radius: 14px; padding: 14px; margin-bottom: 10px;
+  color: white; text-align: center;
+}
+.plan-hero-title { font-size: 16px; font-weight: 900; color: var(--cyan); letter-spacing: 1px; margin-bottom: 4px; }
+.plan-hero-sub { font-size: 10px; color: rgba(255,255,255,0.65); }
+.plan-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.plan-field { display: flex; flex-direction: column; gap: 4px; }
+.plan-label { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.plan-inp {
+  border: 2px solid var(--border); border-radius: 8px;
+  padding: 8px 10px; font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 700; color: var(--text); outline: none;
+}
+.plan-inp:focus { border-color: var(--blue2); }
+.plan-select {
+  border: 2px solid var(--border); border-radius: 8px;
+  padding: 8px 10px; font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 700; color: var(--text); outline: none;
+  background: white; cursor: pointer;
+}
+.plan-select:focus { border-color: var(--blue2); }
+.plan-result-card {
+  background: linear-gradient(135deg, #e8f4fd, #dbeafe);
+  border: 2px solid #bee3f8; border-radius: 12px; padding: 12px; margin-bottom: 8px;
+}
+.plan-result-title { font-size: 12px; font-weight: 900; color: var(--blue); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.plan-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(21,101,192,0.1); }
+.plan-stat-row:last-child { border-bottom: none; }
+.plan-stat-label { font-size: 11px; font-weight: 700; color: var(--muted); }
+.plan-stat-val { font-size: 13px; font-weight: 900; color: var(--blue); font-family: 'Space Mono', monospace; }
+.plan-ders-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.plan-ders-table th { background: var(--navy); color: white; padding: 6px 8px; font-size: 9px; font-weight: 800; text-align: left; }
+.plan-ders-table th:first-child { border-radius: 8px 0 0 8px; }
+.plan-ders-table th:last-child { border-radius: 0 8px 8px 0; text-align: right; }
+.plan-ders-table td { padding: 6px 8px; border-bottom: 1px solid #f0f4f8; font-size: 11px; font-weight: 700; }
+.plan-ders-table td:last-child { text-align: right; font-family: 'Space Mono', monospace; color: var(--blue); }
+.plan-ders-table tr:last-child td { border-bottom: none; }
+.plan-tip { background: #fff8e1; border-left: 4px solid var(--amber); padding: 8px 10px; border-radius: 8px; font-size: 10px; line-height: 1.6; color: #7c4a00; margin-bottom: 6px; }
+.plan-tip b { color: #92400e; }
+.plan-progress-bar { height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-top: 4px; }
+.plan-progress-fill { height: 100%; border-radius: 10px; transition: width .5s; }
+
+/* ── Okul modunda program tipi seçici */
+.prog-type-btns { display: flex; gap: 6px; margin-bottom: 10px; }
+.prog-type-btn {
+  flex: 1; padding: 8px 6px; border: 2px solid var(--border); border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 800;
+  cursor: pointer; background: #f8fafc; color: var(--muted); text-align: center;
+  transition: all .2s;
+}
+.prog-type-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+</style>
+<style>
+
+/* ===== ACAMAY PRO UI LAYER ===== */
+:root{
+  --pro-bg:#f4f7fb;--pro-card:#fff;--pro-text:#172033;--pro-muted:#667085;
+  --pro-line:#e7ebf2;--pro-primary:#315efb;--pro-primary2:#6d5dfc;
+  --pro-success:#12a36a;--pro-warning:#f59e0b;--pro-danger:#e5484d;
+  --pro-radius:18px;--pro-shadow:0 10px 30px rgba(20,35,70,.08);
+}
+*{box-sizing:border-box}
+body{background:linear-gradient(180deg,#f7f9fc 0%,var(--pro-bg) 100%);color:var(--pro-text)}
+button,input,select,textarea{font:inherit}
+button{transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease}
+button:active{transform:scale(.98)}
+.card,.panel,.box,.section,.stat-card,.analysis-card{border-radius:var(--pro-radius)!important;box-shadow:var(--pro-shadow)}
+table{border-collapse:separate;border-spacing:0}
+@media(max-width:700px){
+  body{padding-bottom:84px!important}
+  header,.header,.topbar{position:sticky;top:0;z-index:20}
+  .tabs,.nav,.menu{overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar,.nav::-webkit-scrollbar,.menu::-webkit-scrollbar{display:none}
+  .tabs button,.nav button,.menu button{white-space:nowrap}
+  table{font-size:13px}
+  input,select,textarea{max-width:100%}
+  .container,.content,.main{width:100%!important;padding-left:12px!important;padding-right:12px!important}
+  .grid,.cards,.stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:460px){
+  .grid,.cards,.stats{grid-template-columns:1fr!important}
+}
+/* Mobile-friendly weekly program */
+@media(max-width:700px){
+  #weeklyTable{display:none!important}
+  #mobileProgramCards{display:grid!important}
+}
+#mobileProgramCards{display:none;gap:10px;margin-top:12px}
+.pro-day-card{background:var(--pro-card);border:1px solid var(--pro-line);border-radius:16px;padding:13px;box-shadow:0 5px 18px rgba(20,35,70,.06)}
+.pro-day-title{display:flex;align-items:center;justify-content:space-between;font-weight:800;margin-bottom:9px}
+.pro-slot{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--pro-line)}
+.pro-slot:first-of-type{border-top:0}
+.pro-slot input[type=checkbox]{width:18px;height:18px}
+.pro-slot .pro-min{margin-left:auto;color:var(--pro-muted);font-size:12px}
+.pro-empty{color:var(--pro-muted);font-size:13px;padding:4px 0}
+.pro-dashboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:12px 0}
+.pro-dash-card{background:var(--pro-card);border:1px solid var(--pro-line);border-radius:18px;padding:15px;box-shadow:var(--pro-shadow)}
+.pro-dash-label{font-size:12px;color:var(--pro-muted);font-weight:700}
+.pro-dash-value{font-size:25px;font-weight:900;margin-top:4px}
+.pro-dash-sub{font-size:11px;color:var(--pro-muted);margin-top:3px}
+.pro-progress{height:8px;background:#edf0f5;border-radius:999px;overflow:hidden;margin-top:10px}
+.pro-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pro-primary),var(--pro-primary2));border-radius:999px}
+.pro-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
+.pro-action{border:1px solid var(--pro-line);background:var(--pro-card);border-radius:14px;padding:11px 8px;text-align:center;font-weight:800;font-size:12px;cursor:pointer}
+.pro-section-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0 9px;font-size:17px;font-weight:900}
+.pro-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;background:#eef2ff;color:#315efb;font-size:11px;font-weight:800}
+@media(max-width:700px){.pro-dashboard{grid-template-columns:repeat(2,1fr)}.pro-actions{grid-template-columns:repeat(2,1fr)}}
+
+</style>
+<style>
+:root{--ac-bg:#f4f7fb;--ac-card:#fff;--ac-ink:#142033;--ac-muted:#778195;--ac-line:#e6ebf2;--ac-blue:#1677ff;--ac-shadow:0 8px 28px rgba(15,35,65,.09)}
+html{background:var(--ac-bg)}
+body{background:linear-gradient(180deg,#091b2f 0,#123653 330px,var(--ac-bg) 331px)!important;min-height:100vh}
+.pro-dash-card{background:#fff!important;border:1px solid var(--ac-line)!important;box-shadow:var(--ac-shadow)!important}
+.pro-action{background:#fff!important;border:1px solid var(--ac-line)!important;color:var(--ac-ink)!important;width:100%;display:block;cursor:pointer}
+@media(max-width:700px){
+body{padding:0 0 70px!important;overflow-x:hidden}
+.tabs,.nav,.menu{display:flex!important;gap:4px!important;padding:7px 8px!important;overflow-x:auto!important;scrollbar-width:none!important}
+.tabs::-webkit-scrollbar,.nav::-webkit-scrollbar,.menu::-webkit-scrollbar{display:none}
+.tabs button,.nav button,.menu button{flex:0 0 auto!important;min-width:72px!important;padding:9px 8px!important;border-radius:13px!important;font-size:11px!important}
+#proDashboard{padding:0 12px 12px!important;margin:0!important}
+#proDashboard .pro-section-title{font-size:19px!important;margin:8px 0 10px!important;color:var(--ac-ink)!important}
+.pro-dashboard{grid-template-columns:repeat(2,1fr)!important;gap:9px!important;margin:0!important}
+.pro-dash-card{min-height:122px!important;padding:13px!important;border-radius:18px!important}
+.pro-dash-value{font-size:27px!important}.pro-dash-sub{font-size:10px!important}
+.pro-actions{grid-template-columns:repeat(2,1fr)!important;gap:8px!important;margin:9px 0!important}
+.pro-action{min-height:48px!important;border-radius:15px!important;font-size:12px!important;font-weight:800!important}
+#weeklyTable{display:none!important}
+#mobileProgramCards{display:grid!important;gap:9px!important;margin:10px 12px!important}
+.pro-day-card{border:1px solid var(--ac-line)!important;border-radius:17px!important;padding:12px!important;background:#fff!important;box-shadow:0 5px 18px rgba(15,35,65,.06)!important}
+.pro-day-title{font-size:15px!important}.pro-slot{padding:9px 2px!important;font-size:13px!important}
+input,select,textarea{font-size:16px!important}table{font-size:12px!important}
+.cell-ders{font-size:12px!important;padding:5px 3px!important;min-height:30px!important}
+.cell-time{font-size:9px!important;height:14px!important}
+.okul-cell-inp{font-size:11px!important;padding:6px 3px!important;min-height:32px!important}
+.okul-saat-inp{font-size:9px!important;height:16px!important}
+.a-ders-inp,.a-num-inp{font-size:11px!important}
+}
+.acamay-pro-footer{position:fixed;right:9px;bottom:7px;z-index:50;pointer-events:none;background:rgba(255,255,255,.94);border:1px solid #e4e9f1;border-radius:999px;padding:5px 10px;font-size:9px;color:#697386;box-shadow:0 4px 14px rgba(20,35,70,.08)}
+</style></head>
 <body>
 
-<div class="logo-container">
-    <img src="https://i.ibb.co/84mb5gYg/file-00000000ce8c72439cfbe8e2985449ed.png" alt="logo">
-    <div class="tabs">
-        <button class="tab-btn active" onclick="openPage('program')">📅 PROGRAM</button>
-        <button class="tab-btn" onclick="openPage('analiz')">📊 ANALİZ</button>
-        <button class="tab-btn" onclick="openPage('arsiv')">📜 ARŞİV</button>
-        <button class="tab-btn" onclick="openPage('bilgi')">ℹ️ YARDIM</button>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-head">
+    <img src="https://i.ibb.co/84mb5gYg/file-00000000ce8c72439cfbe8e2985449ed.png" alt="logo" onerror="this.style.display='none'">
+    <div>
+      <div class="app-title">Planlı Ders Çalışma <span style="color:var(--cyan)">PRO</span></div>
+      <div class="app-sub">YKS · LGS Çalışma Takibi</div>
     </div>
+    <div style="margin-left:auto" id="hedefBadge"></div>
+  </div>
+
+  <!-- Dijital Saat -->
+  <div class="digital-clock-bar">
+    <div class="digital-clock" id="digitalClock">00:00:00</div>
+    <div class="clock-date" id="clockDate">— —</div>
+    <button class="alarm-mini-btn" onclick="openAlarmSheet()">⏰ Alarm</button>
+  </div>
+
+  <!-- Profil -->
+  <div class="profil-bar">
+    <input class="profil-inp" id="profAdSoyad" placeholder="👤 Ad Soyad" oninput="saveProfil()">
+    <input class="profil-inp" id="profOkul" placeholder="🏫 Okul" oninput="saveProfil()">
+    <input class="profil-inp" id="profSinif" placeholder="📚 Sınıf" style="max-width:70px" oninput="saveProfil()">
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openPage('program',this)">📅 EV</button>
+    <button class="tab-btn" onclick="openPage('okul',this)">🏫 OKUL</button>
+    <button class="tab-btn" onclick="openPage('analiz',this)">📊 ANALİZ</button>
+    <button class="tab-btn" onclick="openPage('soruplan',this)">🎯 PLAN</button>
+    <button class="tab-btn" onclick="openPage('arsiv',this)">📜 ARŞİV</button>
+    <button class="tab-btn" onclick="openPage('ayarlar',this)">⚙️ AYAR</button>
+  </div>
 </div>
 
+<!-- ============================================================ -->
+<!--  EV ÇALIŞMA PROGRAMI                                         -->
+<!-- ============================================================ -->
 <div id="program" class="page active">
-    <div class="card">
-        <input type="month" id="currentMonth" style="text-align:center; font-weight:bold" onchange="loadDataByMonth()">
-        <table id="weeklyTable" style="margin-top:10px">
-            <thead><tr><th style="width:15%">Gün</th><th>Ders 1</th><th>Ders 2</th><th>Ders 3</th><th style="width:12%">✓</th></tr></thead>
-            <tbody id="weeklyBody"></tbody>
-        </table>
+
+  <div class="month-header">
+    <div>
+      <div class="month-label" id="monthLabel">—</div>
+      <div class="month-sub">Haftalık Ev Çalışma Programı</div>
     </div>
-    <button class="btn" style="background:var(--s); color:white" onclick="saveData()">💾 PROGRAMI KAYDET</button>
+    <div style="display:flex; gap:6px; align-items:center">
+      <button onclick="prevMonth()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer">‹</button>
+      <button onclick="nextMonth()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer">›</button>
+    </div>
+  </div>
+
+  <div class="global-time-bar">
+    <label>⏱ Tüm dersler:</label>
+    <input type="number" class="global-time-inp" id="globalTime" placeholder="dk" min="0">
+    <button class="apply-time-btn" onclick="applyGlobalTime()">UYGULA</button>
+    <span style="font-size:9px;color:#92400e;font-weight:600">Her hücreye ayrı da girilebilir</span>
+  </div>
+
+  <div class="card" style="padding:8px">
+    <div class="week-table-wrap">
+      <table class="week-table">
+        <thead>
+          <tr>
+            <th style="width:36px">GÜN</th>
+            <th>1. DERS</th>
+            <th>2. DERS</th>
+            <th>3. DERS</th>
+            <th>4. DERS</th>
+            <th style="width:28px">✓</th>
+          </tr>
+        </thead>
+        <tbody id="weeklyBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn-primary" onclick="saveData()">💾 KAYDET</button>
+    <button class="btn-amber" onclick="clearMonth()">🗑 AYI TEMİZLE</button>
+    <button class="btn-danger" onclick="clearAll()">✖ TÜMÜNÜ SİL</button>
+  </div>
 </div>
 
+<!-- ============================================================ -->
+<!--  OKUL DERS PROGRAMI (Günler üstte, yatay tablo)             -->
+<!-- ============================================================ -->
+<div id="okul" class="page">
+
+  <!-- Program türü seçici -->
+  <div class="prog-type-btns">
+    <button class="prog-type-btn active" id="ptBtn5" onclick="setOkulDays(5,this)">📅 5 Günlük (Pzt-Cum)</button>
+    <button class="prog-type-btn" id="ptBtn6" onclick="setOkulDays(6,this)">📅 6 Günlük (+Cumartesi)</button>
+    <button class="prog-type-btn" id="ptBtn7" onclick="setOkulDays(7,this)">📅 7 Günlük (Tüm Hafta)</button>
+  </div>
+
+  <!-- Ders saati sayısı -->
+  <div class="global-time-bar" style="margin-bottom:10px">
+    <label>📚 Günlük ders saati:</label>
+    <input type="number" class="global-time-inp" id="okulDersSaati" placeholder="8" min="1" max="12" value="8" style="width:50px">
+    <button class="apply-time-btn" onclick="buildOkulTable()">UYGULA</button>
+    <span style="font-size:9px;color:#92400e;font-weight:600">Satır sayısını ayarlar</span>
+  </div>
+
+  <div class="card" style="padding:8px">
+    <div class="card-title">🏫 OKUL HAFTALIK DERS PROGRAMI <span style="font-size:9px;color:var(--muted);font-weight:600;margin-left:4px">Günler üstte</span></div>
+    <div class="okul-table-wrap">
+      <table class="okul-table" id="okulTable">
+        <!-- JS ile doldurulur -->
+      </table>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn-primary" onclick="saveOkul()">💾 KAYDET</button>
+    <button class="btn-amber" onclick="clearOkul()">🗑 TEMİZLE</button>
+  </div>
+
+  <!-- Okul programı özeti -->
+  <div class="card" id="okulOzetCard" style="display:none">
+    <div class="card-title">📊 HAFTALIK ÖZET</div>
+    <div id="okulOzetBody"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  ANALİZ                                                       -->
+<!-- ============================================================ -->
 <div id="analiz" class="page">
-    <div class="card">
-        <table id="entryTable">
-            <thead><tr><th style="width:35%">Ders Adı</th><th>Soru</th><th>D</th><th>Y</th><th style="width:15%">+</th></tr></thead>
-            <tbody id="entryBody"></tbody>
-        </table>
-        <button class="btn" style="background:var(--p); color:white; margin-top:8px" onclick="addRow()">+ Yeni Ders Ekle</button>
+  <div class="target-bar">
+    <div class="target-emoji" id="targetEmoji">🎯</div>
+    <div class="target-text">
+      <div class="target-title" id="targetTitle">Hedef Seçin</div>
+      <div class="target-sub">Net hesabı otomatik yapılır (Y/4 çıkarılır)</div>
     </div>
-    <div id="cumulativeResults"></div>
-    <div id="generalTotalArea"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 SORU ANALİZİ</div>
+    <table class="analiz-table">
+      <thead>
+        <tr>
+          <th style="width:38%">DERS</th>
+          <th>SORU</th>
+          <th>D</th>
+          <th>Y</th>
+          <th>+</th>
+          <th>🗑</th>
+        </tr>
+      </thead>
+      <tbody id="entryBody"></tbody>
+    </table>
+    <button class="btn-primary" style="margin-top:10px;width:100%" onclick="addAnalizRow()">+ Ders Satırı Ekle</button>
+  </div>
+
+  <div id="cumulativeResults"></div>
+  <div id="generalTotalArea"></div>
 </div>
 
-<div id="arsiv" class="page"><div id="historyList"></div></div>
+<!-- ============================================================ -->
+<!--  GÜNLÜK SORU PLANI — Profesyonel Çalışma Planı             -->
+<!-- ============================================================ -->
+<div id="soruplan" class="page">
 
-<div id="bilgi" class="page">
-    <div class="card">
-        <h3>📖 Kullanım Kılavuzu</h3>
-        <div class="guide-item"><b style="color:#856404">📅 Program:</b> Aylık seçiminizi yapın ve haftalık planınızı kaydedin.</div>
-        <div class="guide-item" style="border-left-color:var(--p)"><b style="color:var(--p)">📊 Analiz:</b> Soru, Doğru ve Yanlış sayılarını girip "+" butonuna basarak toplamlarınıza ekleyin. (D - Y/4) formülüyle netleriniz hesaplanır.</div>
-        <div class="guide-item" style="border-left-color:var(--s)"><b style="color:var(--s)">📜 Arşiv:</b> Her ayın sonunda verileriniz bu sekmede karşılaştırmalı olarak saklanır.</div>
-        <hr>
-        <h3>📥 Yedekleme</h3>
-        <button class="btn" style="background:var(--p); color:white" onclick="exportData()">VERİLERİ YEDEKLE</button>
-        <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-        <button class="btn" style="background:var(--s); color:white; margin-top:10px" onclick="document.getElementById('importFile').click()">YEDEKTEN YÜKLE</button>
-        <button class="btn" style="background:var(--d); color:white; margin-top:10px" onclick="clearData()">⚠️ VERİLERİ SIFIRLA</button>
+  <div class="plan-hero">
+    <div class="plan-hero-title">🎯 PROFESYONEL ÇALIŞMA PLANI</div>
+    <div class="plan-hero-sub">Sınava kaç gün kaldığını ve hedefini gir — günlük soru planın hesaplansın</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚙️ PLAN AYARLARI</div>
+    <div class="plan-form-grid">
+      <div class="plan-field">
+        <span class="plan-label">🎓 Sınav Türü</span>
+        <select class="plan-select" id="planSinavTuru" onchange="planSinavSecildi()">
+          <option value="">Seçin...</option>
+          <option value="YKS-TM">YKS — TM</option>
+          <option value="YKS-MF">YKS — MF</option>
+          <option value="YKS-TS">YKS — TS</option>
+          <option value="YKS-DIL">YKS — Dil</option>
+          <option value="LGS">LGS</option>
+          <option value="OZEL">Özel Hedef</option>
+        </select>
+      </div>
+      <div class="plan-field">
+        <span class="plan-label">📅 Sınava Kalan Gün</span>
+        <input type="number" class="plan-inp" id="planGunSayisi" placeholder="180" min="1" oninput="hesaplaPlan()">
+      </div>
+      <div class="plan-field">
+        <span class="plan-label">⏰ Günlük Çalışma (saat)</span>
+        <input type="number" class="plan-inp" id="planGunSaat" placeholder="6" min="1" max="16" oninput="hesaplaPlan()">
+      </div>
+      <div class="plan-field">
+        <span class="plan-label">🏫 Okula Gidiyor mu?</span>
+        <select class="plan-select" id="planOkulVar" onchange="hesaplaPlan()">
+          <option value="evet">Evet (daha az süre)</option>
+          <option value="hayir">Hayır (tam gün)</option>
+        </select>
+      </div>
+      <div class="plan-field">
+        <span class="plan-label">📊 Mevcut Seviye</span>
+        <select class="plan-select" id="planSeviye" onchange="hesaplaPlan()">
+          <option value="baslangic">Başlangıç (%30)</option>
+          <option value="orta">Orta (%50)</option>
+          <option value="iyi">İyi (%70)</option>
+          <option value="ileri">İleri (%85)</option>
+        </select>
+      </div>
+      <div class="plan-field">
+        <span class="plan-label">🎯 Hedef Başarı</span>
+        <select class="plan-select" id="planHedefBasari" onchange="hesaplaPlan()">
+          <option value="temel">Temel (%60)</option>
+          <option value="iyi">İyi (%75)</option>
+          <option value="mukemmel">Mükemmel (%90)</option>
+          <option value="tam">Tam Puan (%100)</option>
+        </select>
+      </div>
     </div>
+  </div>
+
+  <div id="planSonuclar"></div>
 </div>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker Kayıtlı!'))
-      .catch(err => console.log('Hata:', err));
+
+<!-- ============================================================ -->
+<!--  ARŞİV                                                        -->
+<!-- ============================================================ -->
+<div id="arsiv" class="page">
+  <div class="card-title" style="padding:4px 0 8px">📜 Aylık Arşiv</div>
+  <div id="historyList"></div>
+</div>
+
+<!-- ============================================================ -->
+<!--  AYARLAR                                                      -->
+<!-- ============================================================ -->
+<div id="ayarlar" class="page">
+
+  <div class="card">
+    <div class="card-title">🎯 Sınav Hedefi</div>
+    <div class="hedef-btn-group" id="hedefGroup">
+      <button class="hedef-btn" onclick="setHedef('YKS-TM')">YKS TM</button>
+      <button class="hedef-btn" onclick="setHedef('YKS-MF')">YKS MF</button>
+      <button class="hedef-btn" onclick="setHedef('YKS-TS')">YKS TS</button>
+      <button class="hedef-btn" onclick="setHedef('YKS-DIL')">YKS DİL</button>
+      <button class="hedef-btn" onclick="setHedef('LGS')">LGS</button>
+      <button class="hedef-btn" onclick="setHedef('ÖZEL')">ÖZEL</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📚 DERS LİSTESİ</div>
+    <div class="settings-label">Programa eklenecek dersler</div>
+    <div class="dersler-grid" id="derslerGrid"></div>
+    <div class="ders-add-row">
+      <input type="text" class="ders-input" id="yeniDersInp" placeholder="Ders adı yaz...">
+      <button class="btn-primary" style="width:auto;padding:8px 14px;flex:none" onclick="derEkle()">Ekle</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn-amber" style="flex:1" onclick="addDefaultDersler('YKS')">YKS Dersleri</button>
+      <button class="btn-primary" style="flex:1" onclick="addDefaultDersler('LGS')">LGS Dersleri</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💾 VERİ YÖNETİMİ</div>
+    <button class="btn-primary" style="width:100%;margin-bottom:6px" onclick="exportData()">📥 Verileri Yedekle</button>
+    <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+    <button class="btn-green" style="width:100%;margin-bottom:6px" onclick="document.getElementById('importFile').click()">📤 Yedekten Yükle</button>
+    <button class="btn-danger" style="width:100%" onclick="clearAll()">⚠️ Tüm Verileri Sıfırla</button>
+  </div>
+</div>
+
+<!-- DERS SEÇİM POPUP -->
+<div class="ders-popup" id="dersPopup" style="display:none">
+  <div class="ders-popup-header">
+    <span class="ders-popup-title">📚 DERS SEÇ</span>
+    <button class="ders-popup-close" onmousedown="closePopup()">✕</button>
+  </div>
+  <div id="dersPopupList"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ÇALAR SAAT — Bottom Sheet
+     ══════════════════════════════════════ -->
+<div class="alarm-overlay" id="alarmOverlay">
+  <div class="alarm-sheet">
+    <div class="alarm-sheet-title">⏰ Çalar Saat</div>
+    <div class="alarm-list" id="alarmList"></div>
+    <div class="alarm-add-form">
+      <div style="font-size:11px;font-weight:900;color:var(--blue);margin-bottom:8px">+ Yeni Alarm Ekle</div>
+      <div class="alarm-add-row">
+        <label>Saat:</label>
+        <input type="time" class="alarm-inp-time" id="alarmTimeInp">
+        <input type="text" class="alarm-inp-desc" id="alarmDescInp" placeholder="Alarm açıklaması (ör: Matematik çalışması)">
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-primary" onclick="addAlarm()">➕ Ekle</button>
+        <button class="alarm-close-btn" onclick="closeAlarmSheet()">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alarm Çalıyor Overlay -->
+<div class="alarm-ring-overlay" id="alarmRingOverlay">
+  <div style="font-size:40px;margin-bottom:10px;animation:ringPulse 0.5s infinite">🔔</div>
+  <div class="alarm-ring-clock" id="ringClock">00:00</div>
+  <div class="alarm-ring-label" id="ringLabel">Alarm!</div>
+  <button class="alarm-ring-stop" onclick="stopAlarm()">⏹</button>
+  <div style="color:rgba(255,255,255,0.5);font-size:10px;margin-top:12px">Durdurmak için butona bas</div>
+</div>
+
+<script>
+const STORAGE_KEY = "acamay_v13_pro";
+let db = { months: {}, dersler: [], hedef: "", profil: {}, alarms: [], okul: {} };
+let currentMonth = "";
+let activeInput = null;
+let okulDayCount = 5;
+
+// ── GÜNLER ──
+const GUNLER = [
+  { long: "Pazartesi", short: "Pzt" },
+  { long: "Salı",      short: "Sal" },
+  { long: "Çarşamba",  short: "Çar" },
+  { long: "Perşembe",  short: "Per" },
+  { long: "Cuma",      short: "Cum" },
+  { long: "Cumartesi", short: "C.tesi" },
+  { long: "Pazar",     short: "Paz" }
+];
+
+const DERS_YKS = ["Matematik","Türkçe","Biyoloji","Kimya","Fizik","Tarih","Coğrafya","Felsefe","Edebiyat","Din Kültürü","İngilizce","TYT Mat","TYT Türkçe","TYT Fen","TYT Sosyal"];
+const DERS_LGS = ["Matematik","Türkçe","Fen Bilimleri","T.C. İnkılap Tarihi","Din Kültürü","İngilizce","Sosyal Bilgiler"];
+
+// ── DİJİTAL SAAT ──
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById("digitalClock").textContent = `${h}:${m}:${s}`;
+  const days = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+  const months = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+  document.getElementById("clockDate").innerHTML = `${days[now.getDay()]}<br>${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  checkAlarms(h, m, s);
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── ALARM SİSTEMİ ──
+let alarmRinging = false;
+let alarmAudio = null;
+let lastAlarmFired = "";
+
+function checkAlarms(h, m, s) {
+  if (!db.alarms) return;
+  const timeStr = `${h}:${m}`;
+  if (s !== "00") return; // Sadece tam dakikada kontrol
+  if (lastAlarmFired === timeStr) return;
+  db.alarms.forEach(a => {
+    if (a.aktif && a.saat === timeStr) {
+      lastAlarmFired = timeStr;
+      triggerAlarm(a);
+    }
   });
 }
 
-<script>
-    const STORAGE_KEY = "acamay_v11_pro";
-    let db = { months: {} };
-
-    window.onload = function() {
-        const today = new Date();
-        document.getElementById("currentMonth").value = today.toISOString().substring(0, 7);
-        initProgram();
-        loadDataByMonth();
-    };
-
-    function openPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(event) event.currentTarget.classList.add('active');
-        if(id === 'arsiv') renderArchive();
+function triggerAlarm(alarm) {
+  if (alarmRinging) return;
+  alarmRinging = true;
+  document.getElementById("ringClock").textContent = alarm.saat;
+  document.getElementById("ringLabel").textContent = alarm.aciklama || "Alarm!";
+  document.getElementById("alarmRingOverlay").classList.add("ringing");
+  // Web Audio API ile bip sesi
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function bip() {
+      if (!alarmRinging) return;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      o.type = 'sine';
+      g.gain.setValueAtTime(0.5, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      o.start(ctx.currentTime);
+      o.stop(ctx.currentTime + 0.4);
+      if (alarmRinging) setTimeout(bip, 700);
     }
+    bip();
+    alarmAudio = ctx;
+  } catch(e) {}
+}
 
-    function initProgram() {
-        const body = document.getElementById("weeklyBody");
-        const gunler = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
-        body.innerHTML = "";
-        gunler.forEach(gun => {
-            const row = body.insertRow();
-            row.innerHTML = `<td style="font-weight:bold">${gun.substring(0,3)}</td><td><input type="text" class="w-task"></td><td><input type="text" class="w-task"></td><td><input type="text" class="w-task"></td><td><input type="checkbox" class="w-check"></td>`;
-        });
+function stopAlarm() {
+  alarmRinging = false;
+  document.getElementById("alarmRingOverlay").classList.remove("ringing");
+  if (alarmAudio) { try { alarmAudio.close(); } catch(e) {} alarmAudio = null; }
+}
+
+function openAlarmSheet() {
+  renderAlarmList();
+  document.getElementById("alarmOverlay").classList.add("open");
+}
+function closeAlarmSheet() {
+  document.getElementById("alarmOverlay").classList.remove("open");
+}
+document.getElementById("alarmOverlay").addEventListener("click", function(e) {
+  if (e.target === this) closeAlarmSheet();
+});
+
+function renderAlarmList() {
+  const list = document.getElementById("alarmList");
+  if (!db.alarms || !db.alarms.length) {
+    list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:11px;padding:10px">Henüz alarm yok.</div>';
+    return;
+  }
+  list.innerHTML = db.alarms.map((a,i) => `
+    <div class="alarm-item">
+      <div class="alarm-time-lbl">${a.saat}</div>
+      <div class="alarm-desc">${a.aciklama || 'Alarm'}</div>
+      <input type="checkbox" class="alarm-toggle" ${a.aktif ? 'checked' : ''} onchange="toggleAlarm(${i},this.checked)">
+      <button class="alarm-del" onclick="delAlarm(${i})">🗑</button>
+    </div>
+  `).join('');
+}
+
+function addAlarm() {
+  const saat = document.getElementById("alarmTimeInp").value;
+  const aciklama = document.getElementById("alarmDescInp").value.trim();
+  if (!saat) { showToast("⚠️ Saat seçin!"); return; }
+  if (!db.alarms) db.alarms = [];
+  db.alarms.push({ saat, aciklama: aciklama || "Alarm", aktif: true });
+  db.alarms.sort((a,b) => a.saat.localeCompare(b.saat));
+  document.getElementById("alarmTimeInp").value = "";
+  document.getElementById("alarmDescInp").value = "";
+  persistDB();
+  renderAlarmList();
+  showToast("✅ Alarm eklendi: " + saat);
+}
+
+function delAlarm(i) {
+  db.alarms.splice(i,1);
+  persistDB();
+  renderAlarmList();
+}
+
+function toggleAlarm(i, val) {
+  db.alarms[i].aktif = val;
+  persistDB();
+}
+
+// ══════════════════════════════════════════════
+// OKUL DERS PROGRAMI
+// ══════════════════════════════════════════════
+function setOkulDays(n, btn) {
+  okulDayCount = n;
+  document.querySelectorAll('.prog-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildOkulTable();
+}
+
+function buildOkulTable() {
+  const saatSayisi = parseInt(document.getElementById("okulDersSaati").value) || 8;
+  const table = document.getElementById("okulTable");
+  const gunler = GUNLER.slice(0, okulDayCount);
+
+  let html = '<thead><tr><th class="gun-th" style="min-width:50px">DERS<br>SAATİ</th>';
+  gunler.forEach(g => { html += `<th class="gun-th">${g.long}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  for (let s = 0; s < saatSayisi; s++) {
+    html += `<tr><td class="okul-row-label">${s+1}. Saat</td>`;
+    gunler.forEach((g, gi) => {
+      const key = `${gi}_${s}`;
+      const savedDers = (db.okul && db.okul.dersler && db.okul.dersler[key]) || "";
+      const savedSaat = (db.okul && db.okul.saatler && db.okul.saatler[key]) || "";
+      html += `<td>
+        <input type="text" class="okul-saat-inp" placeholder="08:30" data-key="${key}" value="${savedSaat}" onchange="autoSaveOkul()">
+        <input type="text" class="okul-cell-inp" placeholder="Ders..." data-key="${key}" value="${savedDers}"
+          onfocus="openDersPopup(this)" oninput="filterDersPopup(this)" onchange="autoSaveOkul()">
+      </td>`;
+    });
+    html += '</tr>';
+  }
+  html += '</tbody>';
+  table.innerHTML = html;
+  loadOkulData();
+}
+
+function saveOkul() {
+  autoSaveOkul();
+  renderOkulOzet();
+  showToast("✅ Okul programı kaydedildi!");
+}
+
+function autoSaveOkul() {
+  if (!db.okul) db.okul = { dersler: {}, saatler: {} };
+  if (!db.okul.dersler) db.okul.dersler = {};
+  if (!db.okul.saatler) db.okul.saatler = {};
+  document.querySelectorAll(".okul-cell-inp").forEach(inp => {
+    db.okul.dersler[inp.dataset.key] = inp.value;
+  });
+  document.querySelectorAll(".okul-saat-inp").forEach(inp => {
+    db.okul.saatler[inp.dataset.key] = inp.value;
+  });
+  persistDB();
+}
+
+function loadOkulData() {
+  if (!db.okul) return;
+  document.querySelectorAll(".okul-cell-inp").forEach(inp => {
+    if (db.okul.dersler && db.okul.dersler[inp.dataset.key]) inp.value = db.okul.dersler[inp.dataset.key];
+  });
+  document.querySelectorAll(".okul-saat-inp").forEach(inp => {
+    if (db.okul.saatler && db.okul.saatler[inp.dataset.key]) inp.value = db.okul.saatler[inp.dataset.key];
+  });
+}
+
+function clearOkul() {
+  if (!confirm("Okul programı silinsin mi?")) return;
+  db.okul = { dersler: {}, saatler: {} };
+  persistDB();
+  buildOkulTable();
+  document.getElementById("okulOzetCard").style.display = "none";
+  showToast("🗑 Okul programı temizlendi.");
+}
+
+function renderOkulOzet() {
+  const card = document.getElementById("okulOzetCard");
+  const body = document.getElementById("okulOzetBody");
+  if (!db.okul || !db.okul.dersler) { card.style.display="none"; return; }
+  const sayac = {};
+  Object.values(db.okul.dersler).forEach(d => {
+    if (d.trim()) { sayac[d.trim()] = (sayac[d.trim()]||0) + 1; }
+  });
+  if (!Object.keys(sayac).length) { card.style.display="none"; return; }
+  card.style.display = "block";
+  const sorted = Object.entries(sayac).sort((a,b) => b[1]-a[1]);
+  body.innerHTML = sorted.map(([ders,cnt]) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f4f8">
+      <span style="font-size:11px;font-weight:700;color:var(--text)">${ders}</span>
+      <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:900;color:var(--blue)">${cnt} saat/hafta</span>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+// PLANLAMA & SORU HESAPLAMA
+// ══════════════════════════════════════════════
+const SINAV_PLANLARI = {
+  "YKS-TM": {
+    dersler: [
+      { ad: "TYT Matematik",    toplamSoru: 7000, gunOrani: 0.20 },
+      { ad: "TYT Türkçe",       toplamSoru: 5000, gunOrani: 0.15 },
+      { ad: "TYT Fen/Sosyal",   toplamSoru: 3000, gunOrani: 0.10 },
+      { ad: "AYT Matematik",    toplamSoru: 8000, gunOrani: 0.22 },
+      { ad: "AYT Fizik",        toplamSoru: 4000, gunOrani: 0.12 },
+      { ad: "AYT Kimya",        toplamSoru: 4000, gunOrani: 0.11 },
+      { ad: "AYT Biyoloji",     toplamSoru: 3000, gunOrani: 0.10 },
+    ],
+    hedefNet: { temel:90, iyi:110, mukemmel:130, tam:160 }
+  },
+  "YKS-MF": {
+    dersler: [
+      { ad: "TYT Matematik",    toplamSoru: 7000, gunOrani: 0.20 },
+      { ad: "TYT Türkçe",       toplamSoru: 5000, gunOrani: 0.15 },
+      { ad: "AYT Matematik",    toplamSoru: 9000, gunOrani: 0.25 },
+      { ad: "AYT Fizik",        toplamSoru: 6000, gunOrani: 0.18 },
+      { ad: "AYT Kimya",        toplamSoru: 5000, gunOrani: 0.14 },
+      { ad: "AYT Biyoloji",     toplamSoru: 3000, gunOrani: 0.08 },
+    ],
+    hedefNet: { temel:80, iyi:105, mukemmel:128, tam:155 }
+  },
+  "YKS-TS": {
+    dersler: [
+      { ad: "TYT Türkçe",       toplamSoru: 6000, gunOrani: 0.22 },
+      { ad: "TYT Matematik",    toplamSoru: 4000, gunOrani: 0.12 },
+      { ad: "AYT Edebiyat",     toplamSoru: 7000, gunOrani: 0.25 },
+      { ad: "AYT Tarih",        toplamSoru: 5000, gunOrani: 0.18 },
+      { ad: "AYT Coğrafya",     toplamSoru: 4000, gunOrani: 0.13 },
+      { ad: "AYT Felsefe",      toplamSoru: 4000, gunOrani: 0.10 },
+    ],
+    hedefNet: { temel:85, iyi:108, mukemmel:130, tam:155 }
+  },
+  "YKS-DIL": {
+    dersler: [
+      { ad: "TYT Türkçe",       toplamSoru: 5000, gunOrani: 0.18 },
+      { ad: "TYT Matematik",    toplamSoru: 4000, gunOrani: 0.12 },
+      { ad: "YDT İngilizce",    toplamSoru: 10000, gunOrani: 0.50 },
+      { ad: "Kelime/Gramer",    toplamSoru: 4000, gunOrani: 0.20 },
+    ],
+    hedefNet: { temel:70, iyi:90, mukemmel:110, tam:135 }
+  },
+  "LGS": {
+    dersler: [
+      { ad: "Matematik",        toplamSoru: 4000, gunOrani: 0.28 },
+      { ad: "Türkçe",           toplamSoru: 3000, gunOrani: 0.22 },
+      { ad: "Fen Bilimleri",    toplamSoru: 2500, gunOrani: 0.18 },
+      { ad: "İngilizce",        toplamSoru: 2000, gunOrani: 0.14 },
+      { ad: "T.C. İnkılap",     toplamSoru: 1500, gunOrani: 0.10 },
+      { ad: "Din Kültürü",      toplamSoru: 1000, gunOrani: 0.08 },
+    ],
+    hedefNet: { temel:50, iyi:65, mukemmel:80, tam:90 }
+  },
+  "OZEL": {
+    dersler: [
+      { ad: "Ders 1", toplamSoru: 3000, gunOrani: 0.34 },
+      { ad: "Ders 2", toplamSoru: 3000, gunOrani: 0.33 },
+      { ad: "Ders 3", toplamSoru: 3000, gunOrani: 0.33 },
+    ],
+    hedefNet: { temel:50, iyi:70, mukemmel:90, tam:100 }
+  }
+};
+
+function planSinavSecildi() {
+  hesaplaPlan();
+}
+
+function hesaplaPlan() {
+  const sinavTuru = document.getElementById("planSinavTuru").value;
+  const gunSayisi = parseInt(document.getElementById("planGunSayisi").value) || 0;
+  const gunSaat = parseFloat(document.getElementById("planGunSaat").value) || 6;
+  const okulVar = document.getElementById("planOkulVar").value;
+  const seviye = document.getElementById("planSeviye").value;
+  const hedefBasari = document.getElementById("planHedefBasari").value;
+  const container = document.getElementById("planSonuclar");
+
+  if (!sinavTuru || !gunSayisi) {
+    container.innerHTML = '<div class="card" style="text-align:center;color:var(--muted);padding:20px">Sınav türü ve kalan gün sayısını girin.</div>';
+    return;
+  }
+
+  const plan = SINAV_PLANLARI[sinavTuru];
+  if (!plan) return;
+
+  // Okula gidiyorsa efektif çalışma süresi azalır
+  const okulKatsayi = okulVar === "evet" ? 0.65 : 1.0;
+  const efektifSaat = gunSaat * okulKatsayi;
+  const dakikaSaat = efektifSaat * 60;
+
+  // Seviyeye göre başlangıç çarpanı
+  const seviyeKat = { baslangic: 0.7, orta: 0.85, iyi: 1.0, ileri: 1.15 }[seviye];
+  const hedefKat = { temel: 1.0, iyi: 1.3, mukemmel: 1.6, tam: 2.0 }[hedefBasari];
+
+  // Günlük çözülmesi gereken soru
+  const toplamSoru = plan.dersler.reduce((t,d) => t + d.toplamSoru, 0);
+  const gunlukToplamSoru = Math.ceil((toplamSoru * hedefKat * seviyeKat) / Math.max(gunSayisi,1));
+
+  // Haftalık plan
+  const haftalikToplamSoru = gunlukToplamSoru * 7;
+  const toplamSaat = gunlukToplamSoru / 12; // ortalama 12 soru/saat
+
+  const hedefNetDeger = plan.hedefNet[hedefBasari] || 80;
+
+  let html = `
+    <div class="plan-result-card">
+      <div class="plan-result-title">📊 ÖZET PLAN</div>
+      <div class="plan-stat-row">
+        <span class="plan-stat-label">🎯 Hedef Net</span>
+        <span class="plan-stat-val">${hedefNetDeger} net</span>
+      </div>
+      <div class="plan-stat-row">
+        <span class="plan-stat-label">⏰ Efektif Çalışma/Gün</span>
+        <span class="plan-stat-val">${efektifSaat.toFixed(1)} saat</span>
+      </div>
+      <div class="plan-stat-row">
+        <span class="plan-stat-label">📝 Günlük Toplam Soru</span>
+        <span class="plan-stat-val">${gunlukToplamSoru} soru</span>
+      </div>
+      <div class="plan-stat-row">
+        <span class="plan-stat-label">📅 Haftalık Toplam</span>
+        <span class="plan-stat-val">${haftalikToplamSoru} soru</span>
+      </div>
+      <div class="plan-stat-row">
+        <span class="plan-stat-label">📆 Kalan Gün</span>
+        <span class="plan-stat-val">${gunSayisi} gün</span>
+      </div>
+    </div>
+  `;
+
+  // Ders bazlı günlük soru tablosu
+  html += `
+    <div class="card">
+      <div class="card-title">?? DERSE GÖRE GÜNLÜK SORU PLANI</div>
+      <table class="plan-ders-table">
+        <thead>
+          <tr>
+            <th>Ders</th>
+            <th>Günlük Soru</th>
+            <th style="text-align:right">Toplam Hedef</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  plan.dersler.forEach(d => {
+    const gunlukDers = Math.ceil(gunlukToplamSoru * d.gunOrani);
+    const toplamDers = gunlukDers * gunSayisi;
+    const pct = Math.min(100, Math.round((d.gunOrani)*100));
+    html += `
+      <tr>
+        <td>${d.ad}</td>
+        <td>
+          <span style="font-family:'Space Mono',monospace;color:var(--blue);font-weight:900">${gunlukDers}</span>
+          <div class="plan-progress-bar" style="margin-top:3px">
+            <div class="plan-progress-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--cyan),var(--blue2))"></div>
+          </div>
+        </td>
+        <td>${toplamDers.toLocaleString('tr')}</td>
+      </tr>
+    `;
+  });
+  html += `</tbody></table></div>`;
+
+  // Haftalık takvim tablosu
+  const gunSorular = [
+    { gun: "Pazartesi", oran: 1.0 },
+    { gun: "Salı",      oran: 1.0 },
+    { gun: "Çarşamba",  oran: 1.0 },
+    { gun: "Perşembe",  oran: 1.0 },
+    { gun: "Cuma",      oran: okulVar === "evet" ? 0.8 : 1.0 },
+    { gun: "Cumartesi", oran: okulVar === "evet" ? 1.3 : 1.2 },
+    { gun: "Pazar",     oran: okulVar === "evet" ? 1.4 : 1.3 },
+  ];
+  html += `
+    <div class="card">
+      <div class="card-title">📅 HAFTALIK ÇALIŞMA TAKVİMİ</div>
+      <table class="plan-ders-table">
+        <thead><tr><th>Gün</th><th>Soru Sayısı</th><th style="text-align:right">Süre (tahmini)</th></tr></thead>
+        <tbody>
+  `;
+  gunSorular.forEach(g => {
+    const sorular = Math.ceil(gunlukToplamSoru * g.oran);
+    const sure = Math.ceil(sorular / 12 * 60); // dk
+    html += `
+      <tr>
+        <td>${g.gun}</td>
+        <td><span style="font-family:'Space Mono',monospace;color:var(--blue);font-weight:900">${sorular}</span></td>
+        <td>${Math.floor(sure/60)}s ${sure%60}dk</td>
+      </tr>
+    `;
+  });
+  html += `</tbody></table></div>`;
+
+  // İpuçları
+  html += `
+    <div class="card">
+      <div class="card-title">💡 PROFESYONEl TAVSİYELER</div>
+  `;
+  if (okulVar === "evet") {
+    html += `<div class="plan-tip">🏫 <b>Okula gidiyorsun:</b> Okul dönüşü ilk 2 saat en verimli zaman. Okul çıkışı hemen çalışmaya başla, telefonu koy. Hafta sonu telafi süresi çok önemli — cumartesi-pazar daha fazla soru çöz.</div>`;
+  }
+  html += `
+      <div class="plan-tip">⏰ <b>Pomodoro tekniği:</b> 45 dakika çalış, 10 dakika mola. Günde en az ${Math.ceil(efektifSaat/0.92)} pomodoro bloğu hedefle.</div>
+      <div class="plan-tip">📊 <b>Net takibi:</b> Her gün çözdüğün soruları bu uygulamada "Analiz" sekmesine gir. Yanlışlarını analiz et, aynı konuya dön.</div>
+      <div class="plan-tip">🔄 <b>Tekrar ritmi:</b> Öğrendiğin konuyu 1. gün, 3. gün, 7. gün ve 30. gün tekrar et. Beyin böyle kodlar.</div>
+      <div class="plan-tip">🎯 <b>Günlük ${gunlukToplamSoru} soru</b> çok görünüyorsa paniğe kapılma. Her dersi ayrı bloklara böl. Küçük adımlar büyük sonuçlar doğurur.</div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+// ── INIT ──
+window.onload = function() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) db = JSON.parse(saved);
+  if (!db.dersler) db.dersler = [];
+  if (!db.profil) db.profil = {};
+  if (!db.alarms) db.alarms = [];
+  if (!db.okul) db.okul = { dersler: {}, saatler: {} };
+
+  const now = new Date();
+  currentMonth = now.toISOString().substring(0, 7);
+
+  loadProfil();
+  initWeeklyTable();
+  loadDataByMonth();
+  renderDerslerGrid();
+  updateHedefUI();
+  updateHedefBadge();
+  buildOkulTable();
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest('.ders-popup') && !e.target.closest('.cell-ders') && !e.target.closest('.a-ders-inp') && !e.target.closest('.okul-cell-inp')) closePopup();
+  });
+};
+
+// ── PROFİL ──
+function saveProfil() {
+  db.profil = {
+    ad: document.getElementById("profAdSoyad").value,
+    okul: document.getElementById("profOkul").value,
+    sinif: document.getElementById("profSinif").value
+  };
+  persistDB();
+}
+function loadProfil() {
+  if (db.profil) {
+    if (db.profil.ad) document.getElementById("profAdSoyad").value = db.profil.ad;
+    if (db.profil.okul) document.getElementById("profOkul").value = db.profil.okul;
+    if (db.profil.sinif) document.getElementById("profSinif").value = db.profil.sinif;
+  }
+}
+
+// ── HEDEF ──
+function setHedef(h) { db.hedef = h; persistDB(); updateHedefUI(); updateHedefBadge(); }
+function updateHedefUI() {
+  document.querySelectorAll('.hedef-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.replace(/\s/g,'') === db.hedef.replace(/\s/g,''));
+  });
+  const icons = {'YKS-TM':'🏛️','YKS-MF':'⚗️','YKS-TS':'📜','YKS-DIL':'🌍','LGS':'📘','ÖZEL':'⭐'};
+  const titles = {'YKS-TM':'YKS — TM Hedefli','YKS-MF':'YKS — MF Hedefli','YKS-TS':'YKS — TS Hedefli','YKS-DIL':'YKS — Dil Hedefli','LGS':'LGS Hedefli','ÖZEL':'Özel Hedef'};
+  const e = document.getElementById("targetEmoji");
+  const t = document.getElementById("targetTitle");
+  if (e && db.hedef) { e.textContent = icons[db.hedef]||'🎯'; t.textContent = titles[db.hedef]||db.hedef; }
+}
+function updateHedefBadge() {
+  const b = document.getElementById("hedefBadge");
+  if (b && db.hedef) b.innerHTML = `<span style="background:var(--cyan);color:var(--navy);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:900">${db.hedef}</span>`;
+}
+
+// ── DERSLER ──
+function derEkle() {
+  const inp = document.getElementById("yeniDersInp");
+  const val = inp.value.trim();
+  if (!val || db.dersler.includes(val)) { inp.value=""; return; }
+  db.dersler.push(val); inp.value=""; persistDB(); renderDerslerGrid();
+}
+function derSil(idx) { db.dersler.splice(idx,1); persistDB(); renderDerslerGrid(); }
+function renderDerslerGrid() {
+  const grid = document.getElementById("derslerGrid");
+  if (!grid) return;
+  grid.innerHTML = db.dersler.map((d,i) => `<div class="ders-chip">${d}<button class="del-btn" onclick="derSil(${i})">×</button></div>`).join('');
+}
+function addDefaultDersler(type) {
+  const list = type==='YKS' ? DERS_YKS : DERS_LGS;
+  list.forEach(d => { if (!db.dersler.includes(d)) db.dersler.push(d); });
+  persistDB(); renderDerslerGrid();
+}
+document.addEventListener("keydown", (e) => {
+  if (e.key==="Enter" && document.getElementById("yeniDersInp")===document.activeElement) derEkle();
+});
+
+// ── AY NAVİGASYON ──
+function prevMonth() {
+  const [y,m] = currentMonth.split("-").map(Number);
+  const d = new Date(y, m-2, 1);
+  currentMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  loadDataByMonth();
+}
+function nextMonth() {
+  const [y,m] = currentMonth.split("-").map(Number);
+  const d = new Date(y, m, 1);
+  currentMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  loadDataByMonth();
+}
+function updateMonthLabel() {
+  const [y,m] = currentMonth.split("-").map(Number);
+  const names = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+  document.getElementById("monthLabel").textContent = `${names[m-1]} ${y}`;
+}
+
+// ── PROGRAM TABLOSU ──
+function initWeeklyTable() {
+  const body = document.getElementById("weeklyBody");
+  body.innerHTML = "";
+  GUNLER.forEach((gun, gi) => {
+    const row = body.insertRow();
+    row.className = "week-row"; row.dataset.gun = gi;
+    let cells = `<td>${gun.short}</td>`;
+    for (let s=0; s<4; s++) {
+      cells += `<td><div class="cell-wrap">
+        <input type="number" class="cell-time" placeholder="dk" min="0" data-gun="${gi}" data-slot="${s}" onchange="autoSave()">
+        <input type="text" class="cell-ders" placeholder="Ders" data-gun="${gi}" data-slot="${s}"
+          onfocus="openDersPopup(this)" oninput="filterDersPopup(this)" onchange="autoSave()">
+      </div></td>`;
     }
+    cells += `<td class="check-td"><input type="checkbox" class="done-check" data-gun="${gi}" onchange="toggleDoneRow(this)"></td>`;
+    row.innerHTML = cells;
+  });
+}
+function toggleDoneRow(cb) {
+  const row = document.querySelector(`.week-row[data-gun="${cb.dataset.gun}"]`);
+  if (row) row.classList.toggle('done', cb.checked);
+  autoSave();
+}
 
-    function addRow(name = "") {
-        const row = document.getElementById("entryBody").insertRow();
-        row.innerHTML = `<td><input type="text" class="e-name" value="${name}"></td><td><input type="number" class="e-s"></td><td><input type="number" class="e-d"></td><td><input type="number" class="e-y"></td><td><button class="btn" style="background:var(--s); color:white; margin:0; padding:5px" onclick="addStat(this)">+</button></td>`;
-    }
+// ── DERS POPUP ──
+function openDersPopup(input) { activeInput=input; showPopup(db.dersler); }
+function filterDersPopup(input) {
+  const q = input.value.toLowerCase();
+  const filtered = db.dersler.filter(d => d.toLowerCase().includes(q));
+  if (document.getElementById("dersPopup").style.display!=='none') renderPopupList(filtered);
+}
+function showPopup(list) {
+  const popup = document.getElementById("dersPopup");
+  if (!list.length) { popup.style.display='none'; return; }
+  popup.style.display='block'; renderPopupList(list);
+}
+function renderPopupList(list) {
+  document.getElementById("dersPopupList").innerHTML = list.map(d =>
+    `<div class="ders-popup-item" onmousedown="selectDers('${d.replace(/'/g,"\\'")}', event)">${d}</div>`
+  ).join('');
+}
+function selectDers(ders, e) {
+  e.preventDefault();
+  if (activeInput) { activeInput.value=ders; activeInput.dispatchEvent(new Event('change')); activeInput.blur(); }
+  closePopup();
+}
+function closePopup() { document.getElementById("dersPopup").style.display='none'; activeInput=null; }
 
-    function addStat(btn) {
-        const month = document.getElementById("currentMonth").value;
-        const row = btn.parentElement.parentElement;
-        const name = row.querySelector(".e-name").value.trim();
-        const s = parseInt(row.querySelector(".e-s").value) || 0;
-        const d = parseInt(row.querySelector(".e-d").value) || 0;
-        const y = parseInt(row.querySelector(".e-y").value) || 0;
-        if(!name || s === 0) return;
-        if(!db.months[month]) db.months[month] = { program: {}, stats: {} };
-        if(!db.months[month].stats[name]) db.months[month].stats[name] = {s:0, d:0, y:0};
-        db.months[month].stats[name].s += s; db.months[month].stats[name].d += d; db.months[month].stats[name].y += y;
-        row.querySelector(".e-s").value = ""; row.querySelector(".e-d").value = ""; row.querySelector(".e-y").value = "";
-        saveData(); renderResults();
-    }
+// ── GLOBAL SÜRE ──
+function applyGlobalTime() {
+  const val = document.getElementById("globalTime").value;
+  if (!val) return;
+  document.querySelectorAll(".cell-time").forEach(i => { i.value=val; });
+  autoSave();
+}
 
-    function renderResults() {
-        const month = document.getElementById("currentMonth").value;
-        const container = document.getElementById("cumulativeResults");
-        container.innerHTML = "";
-        if(!db.months[month] || !db.months[month].stats) return;
-        let gS=0, gD=0, gY=0;
-        for(let lesson in db.months[month].stats) {
-            const data = db.months[month].stats[lesson];
-            const net = (data.d - (data.y/4)).toFixed(2);
-            gS += data.s; gD += data.d; gY += data.y;
-            container.innerHTML += `<div class="stat-card"><b>${lesson}</b><div class="stat-grid"><div><span class="stat-lbl">Soru</span><span class="stat-val">${data.s}</span></div><div><span class="stat-lbl" style="color:var(--s)">Doğru</span><span class="stat-val">${data.d}</span></div><div><span class="stat-lbl" style="color:var(--d)">Yanlış</span><span class="stat-val">${data.y}</span></div><div><span class="stat-lbl" style="color:var(--p)">Net</span><span class="stat-val">${net}</span></div></div></div>`;
+// ── VERİ KAYDET / YÜKLE ──
+function saveData() { getMonthData(); persistDB(); showToast("💾 Program kaydedildi!"); }
+function autoSave() { getMonthData(); persistDB(); }
+function getMonthData() {
+  if (!db.months[currentMonth]) db.months[currentMonth] = { program:{}, stats:{} };
+  db.months[currentMonth].program = {
+    dersler: Array.from(document.querySelectorAll(".cell-ders")).map(i=>i.value),
+    sureler: Array.from(document.querySelectorAll(".cell-time")).map(i=>i.value),
+    checks:  Array.from(document.querySelectorAll(".done-check")).map(i=>i.checked)
+  };
+  return db.months[currentMonth];
+}
+function loadDataByMonth() {
+  updateMonthLabel();
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) { db = JSON.parse(saved); if (!db.alarms) db.alarms=[]; if (!db.okul) db.okul={}; }
+  if (!db.dersler) db.dersler=[];
+  if (!db.profil) db.profil={};
+
+  const mData = db.months[currentMonth];
+  document.querySelectorAll(".cell-ders").forEach(i=>i.value="");
+  document.querySelectorAll(".cell-time").forEach(i=>i.value="");
+  document.querySelectorAll(".done-check").forEach(i=>i.checked=false);
+  document.querySelectorAll(".week-row").forEach(r=>r.classList.remove('done'));
+
+  if (mData && mData.program) {
+    const p = mData.program;
+    if (p.dersler) p.dersler.forEach((v,i)=>{const el=document.querySelectorAll(".cell-ders")[i];if(el)el.value=v;});
+    if (p.sureler) p.sureler.forEach((v,i)=>{const el=document.querySelectorAll(".cell-time")[i];if(el)el.value=v;});
+    if (p.checks) p.checks.forEach((v,i)=>{
+      const el=document.querySelectorAll(".done-check")[i];
+      if(el){el.checked=v;if(v){const row=document.querySelector(`.week-row[data-gun="${i}"]`);if(row)row.classList.add('done');}}
+    });
+  }
+
+  const entryBody = document.getElementById("entryBody");
+  entryBody.innerHTML="";
+  if (mData && mData.stats) {
+    Object.keys(mData.stats).forEach(k=>addAnalizRow(k));
+  } else {
+    ["Matematik","Türkçe","Fen"].forEach(k=>addAnalizRow(k));
+  }
+  renderResults();
+}
+
+// ── ANALİZ ──
+function addAnalizRow(name="") {
+  const row = document.getElementById("entryBody").insertRow();
+  row.innerHTML = `
+    <td><input type="text" class="a-ders-inp" value="${name}" onfocus="openDersPopup(this)" oninput="filterDersPopup(this)"></td>
+    <td><input type="number" class="a-num-inp e-s" min="0" placeholder="0"></td>
+    <td><input type="number" class="a-num-inp e-d" min="0" placeholder="0"></td>
+    <td><input type="number" class="a-num-inp e-y" min="0" placeholder="0"></td>
+    <td><button class="add-stat-btn" onclick="addStat(this)">+</button></td>
+    <td><button class="del-row-btn" onclick="this.closest('tr').remove()">🗑</button></td>
+  `;
+}
+function addStat(btn) {
+  const row = btn.closest('tr');
+  const name = row.querySelector(".a-ders-inp").value.trim();
+  const s = parseInt(row.querySelector(".e-s").value)||0;
+  const d = parseInt(row.querySelector(".e-d").value)||0;
+  const y = parseInt(row.querySelector(".e-y").value)||0;
+  if (!name||s===0) { showToast("⚠️ Ders adı ve soru sayısı girin!"); return; }
+  if (!db.months[currentMonth]) db.months[currentMonth]={program:{},stats:{}};
+  if (!db.months[currentMonth].stats) db.months[currentMonth].stats={};
+  if (!db.months[currentMonth].stats[name]) db.months[currentMonth].stats[name]={s:0,d:0,y:0};
+  db.months[currentMonth].stats[name].s+=s;
+  db.months[currentMonth].stats[name].d+=d;
+  db.months[currentMonth].stats[name].y+=y;
+  row.querySelector(".e-s").value=""; row.querySelector(".e-d").value=""; row.querySelector(".e-y").value="";
+  persistDB(); renderResults(); showToast("✅ Kaydedildi!");
+}
+function renderResults() {
+  const container = document.getElementById("cumulativeResults");
+  container.innerHTML="";
+  if (!db.months[currentMonth]||!db.months[currentMonth].stats) return;
+  let gS=0,gD=0,gY=0;
+  const stats = db.months[currentMonth].stats;
+  for (let lesson in stats) {
+    const data = stats[lesson];
+    const net = (data.d-(data.y/4)).toFixed(2);
+    const pct = data.s>0?Math.round((data.d/data.s)*100):0;
+    gS+=data.s; gD+=data.d; gY+=data.y;
+    container.innerHTML+=`
+      <div class="stat-card">
+        <div class="stat-card-title">${lesson}</div>
+        <div class="stat-grid">
+          <div class="sg-item"><span class="sg-lbl">Soru</span><span class="sg-val">${data.s}</span></div>
+          <div class="sg-item"><span class="sg-lbl">Doğru</span><span class="sg-val green">${data.d}</span></div>
+          <div class="sg-item"><span class="sg-lbl">Yanlış</span><span class="sg-val red">${data.y}</span></div>
+          <div class="sg-item"><span class="sg-lbl">Net</span><span class="sg-val blue">${net}</span></div>
+        </div>
+        <div class="progress-bar-wrap" style="margin-top:6px">
+          <div class="progress-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <div style="text-align:right;font-size:9px;color:var(--muted);margin-top:2px">Başarı: %${pct}</div>
+      </div>`;
+  }
+  if (gS>0) {
+    const gNet = (gD-(gY/4)).toFixed(2);
+    document.getElementById("generalTotalArea").innerHTML=`
+      <div class="total-card">
+        <div class="total-card-title">📊 AYLIK GENEL TOPLAM</div>
+        <div class="stat-grid">
+          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Soru</span><span class="sg-val" style="color:#fff">${gS}</span></div>
+          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Doğru</span><span class="sg-val green">${gD}</span></div>
+          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Yanlış</span><span class="sg-val red">${gY}</span></div>
+          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Net</span><span class="sg-val" style="color:var(--cyan)">${gNet}</span></div>
+        </div>
+      </div>`;
+  } else { document.getElementById("generalTotalArea").innerHTML=""; }
+}
+
+// ── ARŞİV ──
+function renderArchive() {
+  const list = document.getElementById("historyList");
+  list.innerHTML="";
+  const months = Object.keys(db.months).sort().reverse();
+  if (!months.length) { list.innerHTML='<div class="card" style="text-align:center;color:var(--muted)">Henüz veri yok.</div>'; return; }
+  const names = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+  months.forEach(m => {
+    const mData = db.months[m];
+    let tS=0,tD=0,tY=0;
+    if (mData.stats) for (let l in mData.stats) { const d=mData.stats[l]; tS+=d.s; tD+=d.d; tY+=d.y; }
+    const [y,mo]=m.split("-").map(Number);
+    const label=`${names[mo-1]} ${y}`;
+    const tNet=(tD-(tY/4)).toFixed(2);
+    list.innerHTML+=`
+      <div class="arsiv-card">
+        <div class="arsiv-month">📅 ${label}</div>
+        <div class="stat-grid">
+          <div class="sg-item"><span class="sg-lbl">Soru</span><span class="sg-val">${tS}</span></div>
+          <div class="sg-item"><span class="sg-lbl">Doğru</span><span class="sg-val green">${tD}</span></div>
+          <div class="sg-item"><span class="sg-lbl">Yanlış</span><span class="sg-val red">${tY}</span></div>
+          <div class="sg-item"><span class="sg-lbl">Net</span><span class="sg-val blue">${tNet}</span></div>
+        </div>
+      </div>`;
+  });
+}
+
+// ── TEMİZLE ──
+function clearMonth() {
+  if (!confirm(`${currentMonth} ayının programı silinsin mi?`)) return;
+  if (db.months[currentMonth]) db.months[currentMonth].program={};
+  document.querySelectorAll(".cell-ders").forEach(i=>i.value="");
+  document.querySelectorAll(".cell-time").forEach(i=>i.value="");
+  document.querySelectorAll(".done-check").forEach(i=>i.checked=false);
+  document.querySelectorAll(".week-row").forEach(r=>r.classList.remove('done'));
+  persistDB(); showToast("🗑 Bu ayın programı temizlendi.");
+}
+function clearAll() {
+  if (!confirm("TÜM veriler silinsin mi? Bu işlem geri alınamaz!")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+// ── SEKME ──
+function openPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id==='arsiv') renderArchive();
+  if (id==='ayarlar') renderDerslerGrid();
+  if (id==='okul') { buildOkulTable(); }
+}
+
+// ── YEDEK ──
+function exportData() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  const blob = new Blob([data||'{}'],{type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `acamay_yedek_${currentMonth}.json`;
+  a.click();
+}
+function importData(e) {
+  const reader = new FileReader();
+  reader.onload = function(ev) { localStorage.setItem(STORAGE_KEY,ev.target.result); location.reload(); };
+  reader.readAsText(e.target.files[0]);
+}
+
+// ── PERSIST ──
+function persistDB() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+
+// ── TOAST ──
+function showToast(msg) {
+  let t = document.getElementById("toast");
+  if (!t) { t=document.createElement("div"); t.id="toast"; t.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 18px;border-radius:20px;font-size:12px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity .3s"; document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity="1";
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>{t.style.opacity="0";},2000);
+}
+
+/* ===== ACAMAY PRO FEATURES ===== */
+(function(){
+  window.sinavNetKatsayi = 4;
+
+  function examNetCoefficient(){
+    const rootText=(document.body.innerText||'').toUpperCase();
+    // LGS uses 3 wrong answers = 1 correct; YKS-style calculations use 4.
+    return rootText.includes('LGS') ? 3 : 4;
+  }
+  window.setNetCoefficient = function(){ window.sinavNetKatsayi=examNetCoefficient(); };
+
+  function safeNum(v){ const n=Number(v); return Number.isFinite(n)?n:0; }
+
+  // Saved analysis records: add edit/delete support without destroying legacy data.
+  window.proEditStat = function(month,name){
+    try{
+      const db0=JSON.parse(localStorage.getItem('studyDB')||localStorage.getItem('db')||'null');
+      if(!db0) return;
+      const m=db0.months?.[month]; const s=m?.stats?.[name];
+      if(!s){ alert('Kayıt bulunamadı.'); return; }
+      const dogru=prompt(name+' - Doğru sayısı',s.correct??s.dogru??0);
+      if(dogru===null)return;
+      const yanlis=prompt(name+' - Yanlış sayısı',s.wrong??s.yanlis??0);
+      if(yanlis===null)return;
+      s.correct=s.dogru=safeNum(dogru);
+      s.wrong=s.yanlis=safeNum(yanlis);
+      s.net=s.correct-s.wrong/(window.sinavNetKatsayi||4);
+      localStorage.setItem('studyDB',JSON.stringify(db0));
+      location.reload();
+    }catch(e){console.warn(e)}
+  };
+
+  window.proDeleteStat = function(month,name){
+    if(!confirm(name+' kaydını silmek istediğine emin misin?'))return;
+    try{
+      const keys=['studyDB','db'];
+      for(const k of keys){
+        const raw=localStorage.getItem(k); if(!raw)continue;
+        const d=JSON.parse(raw);
+        if(d.months?.[month]?.stats?.[name]){
+          delete d.months[month].stats[name];
+          localStorage.setItem(k,JSON.stringify(d));
         }
-        if(gS > 0) document.getElementById("generalTotalArea").innerHTML = `<div class="stat-card" style="background:var(--p); color:white; border:none"><div style="text-align:center; font-weight:bold; margin-bottom:5px">AYLIK GENEL TOPLAM</div><div class="stat-grid"><div><span class="stat-lbl" style="color:#ddd">Soru</span><span class="stat-val">${gS}</span></div><div><span class="stat-lbl" style="color:#afffaf">Doğru</span><span class="stat-val">${gD}</span></div><div><span class="stat-lbl" style="color:#ffbaba">Yanlış</span><span class="stat-val">${gY}</span></div><div><span class="stat-lbl" style="color:#fff">Net</span><span class="stat-val">${(gD - (gY/4)).toFixed(2)}</span></div></div></div>`;
-    }
+      }
+      location.reload();
+    }catch(e){console.warn(e)}
+  };
 
-    function renderArchive() {
-        const list = document.getElementById("historyList");
-        list.innerHTML = "";
-        Object.keys(db.months).sort().reverse().forEach(m => {
-            let tS=0, tD=0, tY=0;
-            for(let l in db.months[m].stats) { const d = db.months[m].stats[l]; tS+=d.s; tD+=d.d; tY+=d.y; }
-            list.innerHTML += `<div class="card"><b>📅 ${m} Özeti</b><hr><div class="stat-grid"><div><span class="stat-lbl">Soru</span><span class="stat-val">${tS}</span></div><div><span class="stat-lbl">Doğru</span><span class="stat-val">${tD}</span></div><div><span class="stat-lbl">Yanlış</span><span class="stat-val">${tY}</span></div><div><span class="stat-lbl">Net</span><span class="stat-val">${(tD-(tY/4)).toFixed(2)}</span></div></div></div>`;
+  // Robust backup: versioned envelope + validation, while accepting the old raw JSON format.
+  window.exportProfessionalBackup = function(){
+    const keys=['studyDB','db'];
+    let payload=null, sourceKey=null;
+    for(const k of keys){ const raw=localStorage.getItem(k); if(raw){try{payload=JSON.parse(raw);sourceKey=k;break}catch(e){}}}
+    if(!payload){alert('Yedeklenecek veri bulunamadı.');return;}
+    const envelope={app:'Acamay Ders/Çalışma Planlayıcı',schemaVersion:2,exportedAt:new Date().toISOString(),source:sourceKey,data:payload};
+    const blob=new Blob([JSON.stringify(envelope,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='acamay-yedek-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  };
+
+  window.importProfessionalBackup = function(file){
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(){
+      try{
+        const parsed=JSON.parse(reader.result);
+        const data=parsed?.data?.months ? parsed.data : parsed;
+        if(!data || typeof data!=='object' || !data.months) throw new Error('Geçersiz yedek');
+        if(!confirm('Mevcut veriler yedekten gelen verilerle değiştirilecek. Devam edilsin mi?'))return;
+        localStorage.setItem('studyDB',JSON.stringify(data));
+        localStorage.setItem('db',JSON.stringify(data));
+        alert('Yedek başarıyla geri yüklendi.');
+        location.reload();
+      }catch(e){alert('Yedek dosyası geçersiz veya bozuk.');}
+    };
+    reader.readAsText(file);
+  };
+
+  function getDb(){
+    for(const k of ['studyDB','db']){
+      try{const d=JSON.parse(localStorage.getItem(k)||'null');if(d)return d}catch(e){}
+    }
+    return null;
+  }
+
+  function getMonthData(){
+    const d=getDb(); if(!d)return {};
+    const m=d.months?.[window.currentMonth] || d.months?.[new Date().toISOString().slice(0,7)] || {};
+    return m;
+  }
+
+  function buildDashboard(){
+    const host=document.querySelector('#home,#ev,#ana,#app')||document.body;
+    if(document.getElementById('proDashboard'))return;
+    // Put the dashboard immediately before the first major table/section.
+    const anchor=document.querySelector('#weeklyTable, table');
+    if(!anchor || !anchor.parentElement)return;
+    const wrap=document.createElement('div');
+    wrap.id='proDashboard';
+    wrap.innerHTML=`
+      <div class="pro-section-title"><span>Bugün Ne Yapıyorum?</span><span class="pro-badge">ACAMAY PRO</span></div>
+      <div class="pro-dashboard">
+        <div class="pro-dash-card"><div class="pro-dash-label">📚 Çalışma</div><div class="pro-dash-value" id="proStudyMin">0 dk</div><div class="pro-dash-sub">Bugünkü kayıtlı süre</div></div>
+        <div class="pro-dash-card"><div class="pro-dash-label">☑️ Tamamlanan</div><div class="pro-dash-value" id="proDone">0</div><div class="pro-dash-sub">Tamamlanan çalışma</div></div>
+        <div class="pro-dash-card"><div class="pro-dash-label">🎯 Hedef</div><div class="pro-dash-value" id="proTarget">0</div><div class="pro-dash-sub">Günlük çalışma hedefi</div></div>
+        <div class="pro-dash-card"><div class="pro-dash-label">🔥 Seri</div><div class="pro-dash-value" id="proStreak">0 gün</div><div class="pro-dash-sub">Ardışık çalışma günü</div></div>
+      </div>
+      <div class="pro-actions">
+<button type="button" class="pro-action" onclick="proOpenPage('program')">📅 Bugünkü Plan</button>
+<button type="button" class="pro-action" onclick="proOpenPage('soruplan')">🎯 Hedefim</button>
+<button type="button" class="pro-action" onclick="proOpenPage('program')">📚 Program</button>
+<button type="button" class="pro-action" onclick="proOpenPage('ayarlar')">⚙️ Ayarlar</button>
+</div>`;
+    anchor.parentElement.insertBefore(wrap,anchor);
+    refreshDashboard();
+  }
+
+  function refreshDashboard(){
+    const db=getDb(); if(!db)return;
+    const month=getMonthData();
+    const stats=month.stats||{};
+    let q=0, done=0, mins=0;
+    Object.values(stats).forEach(s=>{q+=safeNum(s.total??s.soru??s.questions);});
+    const tables=[...document.querySelectorAll('table')];
+    tables.forEach(t=>{
+      t.querySelectorAll('input[type=checkbox]').forEach(c=>{if(c.checked)done++;});
+      t.querySelectorAll('input').forEach(i=>{if(i.type==='number')mins+=safeNum(i.value);});
+    });
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+    set('proStudyMin',mins+' dk');set('proDone',done);
+    set('proTarget',safeNum(month.goal??month.target??0));
+    set('proStreak',calculateStreak(db)+' gün');
+  }
+
+  function calculateStreak(db){
+    let streak=0;
+    const months=db.months||{};
+    const dates=[];
+    Object.values(months).forEach(m=>{
+      (m.statsDates||m.studyDates||[]).forEach(x=>dates.push(String(x).slice(0,10)));
+    });
+    const set=new Set(dates);
+    const d=new Date(); d.setHours(12,0,0,0);
+    while(set.has(d.toISOString().slice(0,10))){
+      streak++; d.setDate(d.getDate()-1);
+    }
+    return streak;
+  }
+
+  // Mobile program cards based on the existing weekly table.
+  function buildMobileProgram(){
+    if(document.getElementById('mobileProgramCards'))return;
+    const table=document.getElementById('weeklyTable');
+    if(!table)return;
+    const wrap=document.createElement('div');wrap.id='mobileProgramCards';
+    const rows=[...table.querySelectorAll('tr')].slice(1);
+    rows.forEach(row=>{
+      const cells=[...row.children]; if(!cells.length)return;
+      const day=(cells[0]?.innerText||'Gün').trim();
+      const card=document.createElement('div');card.className='pro-day-card';
+      let slots='';
+      cells.slice(1).forEach((c,i)=>{
+        const txt=(c.innerText||'').trim().replace(/\s+/g,' ');
+        if(!txt)return;
+        slots+=`<div class="pro-slot"><span>${i+1}.</span><span>${escapeHtml(txt.slice(0,90))}</span></div>`;
+      });
+      card.innerHTML=`<div class="pro-day-title"><span>${escapeHtml(day)}</span><span class="pro-badge">Program</span></div>${slots||'<div class="pro-empty">Bugün için kayıt yok.</div>'}`;
+      wrap.appendChild(card);
+    });
+    table.parentElement.insertBefore(wrap,table.nextSibling);
+  }
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+  // Make old analysis result rows actionable where a trash/edit affordance is available.
+  function enhanceAnalysis(){
+    document.querySelectorAll('table').forEach(t=>{
+      const heads=[...t.querySelectorAll('th')].map(x=>(x.innerText||'').toLowerCase());
+      if(heads.some(x=>x.includes('doğru')) && heads.some(x=>x.includes('yanlış'))){
+        t.querySelectorAll('tbody tr').forEach(tr=>{
+          if(tr.querySelector('.pro-edit-actions'))return;
+          const name=(tr.children[0]?.innerText||'').trim();
+          if(!name)return;
+          const td=document.createElement('td');td.className='pro-edit-actions';
+          td.innerHTML=`<button type="button" title="Düzenle" style="margin-right:5px">✏️</button><button type="button" title="Sil">🗑️</button>`;
+          td.children[0].onclick=()=>window.proEditStat(window.currentMonth||'',name);
+          td.children[1].onclick=()=>window.proDeleteStat(window.currentMonth||'',name);
+          tr.appendChild(td);
         });
-    }
+      }
+    });
+  }
 
-    function saveData() {
-        const month = document.getElementById("currentMonth").value;
-        if(!db.months[month]) db.months[month] = { program: {}, stats: {} };
-        db.months[month].program = {
-            tasks: Array.from(document.querySelectorAll(".w-task")).map(i => i.value),
-            checks: Array.from(document.querySelectorAll(".w-check")).map(i => i.checked),
-            lessonNames: Array.from(document.querySelectorAll(".e-name")).map(i => i.value)
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    }
+  document.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(()=>{window.setNetCoefficient();buildDashboard();buildMobileProgram();enhanceAnalysis();},350);
+    setInterval(refreshDashboard,2000);
+  });
+})();
 
-    function loadDataByMonth() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if(saved) db = JSON.parse(saved);
-        const month = document.getElementById("currentMonth").value;
-        const mData = db.months[month];
-        document.querySelectorAll(".w-task").forEach(i => i.value = "");
-        document.querySelectorAll(".w-check").forEach(i => i.checked = false);
-        document.getElementById("entryBody").innerHTML = "";
-        if(mData && mData.program) {
-            mData.program.tasks.forEach((v, i) => { if(document.querySelectorAll(".w-task")[i]) document.querySelectorAll(".w-task")[i].value = v; });
-            mData.program.checks.forEach((v, i) => { if(document.querySelectorAll(".w-check")[i]) document.querySelectorAll(".w-check")[i].checked = v; });
-            if(mData.program.lessonNames) mData.program.lessonNames.forEach(l => addRow(l));
-        } else { ["Matematik", "Türkçe", "Fen"].forEach(l => addRow(l)); }
-        renderResults();
-    }
-
-    function exportData() {
-        const data = localStorage.getItem(STORAGE_KEY);
-        const blob = new Blob([data], {type: "application/json"});
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `acamay_yedek.json`;
-        a.click();
-    }
-
-    function importData(e) {
-        const reader = new FileReader();
-        reader.onload = function(ev) { localStorage.setItem(STORAGE_KEY, ev.target.result); location.reload(); };
-        reader.readAsText(e.target.files[0]);
-    }
-
-    function clearData() { if(confirm("Tüm veriler silinsin mi?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 </script>
-</body>
+
+<div style="position:fixed;right:10px;bottom:8px;z-index:50;pointer-events:none;
+background:rgba(255,255,255,.92);border:1px solid #e7ebf2;border-radius:999px;
+padding:5px 9px;font-size:10px;color:#667085;box-shadow:0 4px 14px rgba(20,35,70,.08)">
+  Acamay • Pro v2
+</div>
+
+<div class="acamay-pro-footer">Acamay • Planlı Çalışma PRO</div><script>
+window.proOpenPage=function(id){
+try{
+  const btn=[...document.querySelectorAll('.tab-btn')].find(b=>(b.getAttribute('onclick')||'').includes("'"+id+"'"));
+  if(typeof window.openPage==='function')window.openPage(id,btn||null);
+  window.scrollTo({top:0,behavior:'smooth'});
+}catch(e){console.warn(e);}
+};
+</script></body>
 </html>
