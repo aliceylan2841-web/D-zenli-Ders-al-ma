@@ -509,6 +509,37 @@ body { background: var(--bg); font-family: 'Nunito', sans-serif; font-size: 12px
   transition: all .2s;
 }
 .prog-type-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+/* REHBER */
+.rh-card details{border-bottom:1px solid var(--border);padding:7px 0}
+.rh-card summary{font-weight:900;font-size:12px;color:var(--navy);cursor:pointer;list-style:none}
+.rh-card summary::before{content:"▸ ";color:var(--cyan)}
+.rh-card details[open] summary::before{content:"▾ "}
+.rh-card ul{padding-left:16px;margin-top:6px;line-height:1.55;font-size:11.5px}
+.rh-card li{margin-bottom:3px}
+.dipnot{background:#fff8e1;border-left:4px solid var(--amber);border-radius:8px;padding:7px 9px;margin-top:7px;font-size:11px;line-height:1.5;color:#7a4b00}
+.rh-chk-row{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:11.5px;font-weight:700}
+.not-item{display:flex;justify-content:space-between;gap:8px;background:#f4f8fd;border-radius:8px;padding:7px 9px;margin-top:6px;font-size:11.5px;line-height:1.45}
+.not-item small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.save-btn{width:100%;background:linear-gradient(135deg,var(--green),#00a383);color:#fff;border:none;border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;margin-bottom:10px}
+
+/* ANA EKRAN */
+body.on-home .tabs{display:none}
+.home-hello{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.home-hello .hh-name{font-size:16px;font-weight:900}
+.home-hello .hh-sub{font-size:10.5px;opacity:.9;margin-top:2px;font-weight:700}
+.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.home-stat{background:rgba(255,255,255,.18);border-radius:10px;padding:7px 4px;text-align:center}
+.home-stat b{display:block;font-family:'Space Mono',monospace;font-size:15px}
+.home-stat span{font-size:8.5px;font-weight:800;letter-spacing:.5px;opacity:.9}
+.home-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.home-tile{background:var(--card);border:none;border-radius:16px;padding:16px 10px;box-shadow:var(--shadow);cursor:pointer;text-align:center;font-family:'Nunito',sans-serif;border-bottom:4px solid var(--c,var(--blue));transition:transform .12s}
+.home-tile:active{transform:scale(.96)}
+.home-tile .ht-ic{font-size:30px;line-height:1.1}
+.home-tile .ht-t{font-size:13px;font-weight:900;color:var(--navy);margin-top:6px}
+.home-tile .ht-d{font-size:9.5px;color:var(--muted);font-weight:700;margin-top:2px;line-height:1.35}
+.home-fab{position:fixed;left:10px;bottom:10px;z-index:60;background:var(--navy);color:#fff;border:none;border-radius:999px;padding:9px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer;display:none}
+body:not(.on-home) .home-fab{display:block}
 </style>
 <style>
 
@@ -598,7 +629,7 @@ input,select,textarea{font-size:16px!important}table{font-size:12px!important}
 }
 .acamay-pro-footer{position:fixed;right:9px;bottom:7px;z-index:50;pointer-events:none;background:rgba(255,255,255,.94);border:1px solid #e4e9f1;border-radius:999px;padding:5px 10px;font-size:9px;color:#697386;box-shadow:0 4px 14px rgba(20,35,70,.08)}
 </style></head>
-<body>
+<body class="on-home">
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -625,11 +656,13 @@ input,select,textarea{font-size:16px!important}table{font-size:12px!important}
     <input class="profil-inp" id="profSinif" placeholder="📚 Sınıf" style="max-width:70px" oninput="saveProfil()">
   </div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="openPage('program',this)">📅 EV</button>
+    <button class="tab-btn active" onclick="openPage('home',this)">🏠 ANA</button>
+    <button class="tab-btn" onclick="openPage('program',this)">📅 EV</button>
     <button class="tab-btn" onclick="openPage('okul',this)">🏫 OKUL</button>
     <button class="tab-btn" onclick="openPage('analiz',this)">📊 ANALİZ</button>
     <button class="tab-btn" onclick="openPage('soruplan',this)">🎯 PLAN</button>
     <button class="tab-btn" onclick="openPage('arsiv',this)">📜 ARŞİV</button>
+    <button class="tab-btn" onclick="openPage('rehber',this)">📚 REHBER</button>
     <button class="tab-btn" onclick="openPage('ayarlar',this)">⚙️ AYAR</button>
   </div>
 </div>
@@ -637,7 +670,29 @@ input,select,textarea{font-size:16px!important}table{font-size:12px!important}
 <!-- ============================================================ -->
 <!--  EV ÇALIŞMA PROGRAMI                                         -->
 <!-- ============================================================ -->
-<div id="program" class="page active">
+<div id="home" class="page active">
+  <div class="home-hello">
+    <div class="hh-name" id="hhName">Merhaba 👋</div>
+    <div class="hh-sub" id="hhSub">Bir bölüm seç ve başla</div>
+    <div class="home-stats">
+      <div class="home-stat"><b id="hsGun">—</b><span>KALAN GÜN</span></div>
+      <div class="home-stat"><b id="hsSoru">0</b><span>BU AY SORU</span></div>
+      <div class="home-stat"><b id="hsNet">0</b><span>BU AY NET</span></div>
+    </div>
+  </div>
+  <div class="home-grid">
+<button class="home-tile" style="--c:#1565c0" onclick="openPage('program')"><div class="ht-ic">📅</div><div class="ht-t">Ev Programı</div><div class="ht-d">Haftalık çalışma planın</div></button>
+<button class="home-tile" style="--c:#00b4d8" onclick="openPage('okul')"><div class="ht-ic">🏫</div><div class="ht-t">Okul Programı</div><div class="ht-d">Ders saatlerin</div></button>
+<button class="home-tile" style="--c:#7c3aed" onclick="openPage('analiz')"><div class="ht-ic">📊</div><div class="ht-t">Analiz</div><div class="ht-d">Soru, doğru, yanlış, net</div></button>
+<button class="home-tile" style="--c:#00b894" onclick="openPage('soruplan')"><div class="ht-ic">🎯</div><div class="ht-t">Hedef Planı</div><div class="ht-d">Günlük soru hesabı</div></button>
+<button class="home-tile" style="--c:#ffb300" onclick="openPage('rehber')"><div class="ht-ic">📚</div><div class="ht-t">LGS Rehberi</div><div class="ht-d">Taktik, dipnot, notlar</div></button>
+<button class="home-tile" style="--c:#e53935" onclick="openPage('arsiv')"><div class="ht-ic">📜</div><div class="ht-t">Arşiv</div><div class="ht-d">Aylık geçmişin</div></button>
+<button class="home-tile" style="--c:#ff7043" onclick="openAlarmSheet()"><div class="ht-ic">⏰</div><div class="ht-t">Alarm</div><div class="ht-d">Çalışma hatırlatıcıları</div></button>
+<button class="home-tile" style="--c:#6b7a8d" onclick="openPage('ayarlar')"><div class="ht-ic">⚙️</div><div class="ht-t">Ayarlar</div><div class="ht-d">Dersler, hedef, yedek</div></button>
+  </div>
+</div>
+
+<div id="program" class="page">
 
   <div class="month-header">
     <div>
@@ -818,12 +873,38 @@ input,select,textarea{font-size:16px!important}table{font-size:12px!important}
     </div>
   </div>
 
+  <button class="save-btn" onclick="savePlan();showToast('💾 Plan kaydedildi!')">💾 PLANI KAYDET</button>
   <div id="planSonuclar"></div>
 </div>
 
 <!-- ============================================================ -->
 <!--  ARŞİV                                                        -->
 <!-- ============================================================ -->
+<div id="rehber" class="page">
+  <div class="plan-hero"><div class="plan-hero-title">📚 LGS ÇALIŞMA REHBERİ</div><div class="plan-hero-sub">Taktikler, dipnotlar ve kendi notların — hepsi cihazında kayıtlı</div></div>
+  <div class="card rh-card">
+    <div class="card-title">🧭 SINAVI TANI</div>
+<details open><summary>Sınav yapısı</summary><ul><li>Toplam <b>90 soru</b>, 155 dk, yalnızca 8. sınıf konuları, 4 şıklı test.</li><li><b>Sözel oturum (75 dk):</b> Türkçe 20, İnkılap 10, Din 10, İngilizce 10 = 50 soru.</li><li><b>Sayısal oturum (80 dk):</b> Matematik 20, Fen 20 = 40 soru. Oturumlar arası 45 dk ara var.</li><li>Katsayı: Türkçe, Matematik, Fen <b>4</b>; İnkılap, Din, İngilizce <b>1</b>.</li></ul><div class="dipnot">📌 <b>Dipnot:</b> LGS'de <b>3 yanlış 1 doğruyu götürür</b>: Net = Doğru − Yanlış/3. (Uygulamada hedef LGS seçiliyse netler otomatik /3 hesaplanır.) Puan ağırlığı 4 katsayılı üç derste — çalışma zamanını buna göre dağıt.</div></details></div>
+  <div class="card rh-card">
+    <div class="card-title">🧠 NASIL ÇALIŞMALI?</div>
+<details><summary>Aktif hatırlama</summary><ul><li>Konuyu okuyup bırakma; kitabı kapat, hatırladıklarını kâğıda yaz veya kendine anlat.</li><li>Sonra kitaba bak, eksikleri işaretle. Tekrar okumak yerine kendini sınamak kalıcı öğrenme sağlar.</li></ul></details><details><summary>Aralıklı tekrar</summary><ul><li>Yeni konuyu <b>1. gün, 3. gün, 7. gün, 30. gün</b> tekrar et.</li><li>Her tekrarda 10–15 dakikalık kısa test çöz; uzun okuma yapma.</li></ul><div class="dipnot">📌 <b>Dipnot:</b> Tekrar takvimini "EV" sekmesindeki programına ayrı bir blok olarak yaz.</div></details><details><summary>Pomodoro düzeni</summary><ul><li>40–45 dk çalış, 10 dk mola. 4 blok sonra 25–30 dk uzun mola.</li><li>Telefon başka odada olsun; mola sırasında ekran yerine su, hareket, nefes.</li></ul></details><details><summary>Günlük akış (örnek)</summary><ul><li><b>1. blok:</b> Zayıf olduğun ders — konu çalışması.</li><li><b>2. blok:</b> Soru çözümü (zamanlı).</li><li><b>3. blok:</b> Yanlış analizi + kısa tekrar.</li><li>Hafta içi 1–2 ders, hafta sonu deneme + genel tekrar.</li></ul></details><details><summary>Yanlış defteri</summary><ul><li>Her yanlış/boş soru için: konu, neden yanlış oldu (bilgi eksiği / dikkat / süre), doğru çözüm.</li><li>Haftada bir defteri yeniden çöz. Aynı hatayı üçüncü kez yapmamak hedef.</li></ul><div class="dipnot">📌 <b>Dipnot:</b> "ANALİZ" sekmesine girdiğin doğru-yanlış sayıları, hangi derse daha çok yüklenmen gerektiğini gösterir.</div></details></div>
+  <div class="card rh-card">
+    <div class="card-title">📖 DERS DERS TAKTİK</div>
+<details><summary>Türkçe (katsayı 4)</summary><ul><li>Her gün <b>2–3 paragraf</b> çöz; soru kökünü önce oku, sonra metne dön.</li><li>Yeni nesil sorularda tabloyu/grafiği metinle birlikte oku.</li><li>Dil bilgisi, yazım-noktalama ve sözcükte anlam için kısa konu özeti çıkar.</li></ul></details><details><summary>Matematik (katsayı 4)</summary><ul><li>Önce konu → orta test → zor soru sırasını izle; işlemleri kâğıda yaz.</li><li>Geometride şekli çiz, verileri şekle işle; problemlerde "ne isteniyor?" cümlesini altı çiz.</li><li>Üslü/köklü sayılar, denklemler, olasılık, geometri her denemede çıkan çekirdek konulardır.</li></ul></details><details><summary>Fen Bilimleri (katsayı 4)</summary><ul><li>Kavramı ezberlemek yerine neden-sonuç kur; deney ve grafik yorumlama sorularını bol çöz.</li><li>Formülleri (hız, basınç, yoğunluk vb.) tek sayfalık kartta topla ve her gün gözden geçir.</li><li>Kimyasal tepkimeler, mevsimler, DNA-genetik, enerji dönüşümleri sık soru gelen alanlardır.</li></ul></details><details><summary>İnkılap Tarihi</summary><ul><li>Olayları <b>kronoloji + neden-sonuç</b> tablosuyla çalış; kavramları kendi cümlenle yaz.</li><li>Kısa özet kartları ve harita/görsel notları sınav öncesi hızlı tekrar sağlar.</li></ul></details><details><summary>Din Kültürü</summary><ul><li>Ayet-hadis ve kavramları konu başına tek sayfada topla; her hafta kısa test çöz.</li><li>Katsayısı 1 olsa da 10 net kolayca yapılabilir; düzenli tekrar yeterli olur.</li></ul></details><details><summary>İngilizce</summary><ul><li>Günde <b>10–15 yeni kelime</b>, diyalog ve kısa okuma parçası.</li><li>Kelimeleri cümle içinde öğren; sık yapılan hatalarını not al.</li></ul></details></div>
+  <div class="card rh-card">
+    <div class="card-title">⏱ DENEME & SINAV TAKTİĞİ</div>
+<details open><summary>Denemeyi gerçek gibi çöz</summary><ul><li>Sözel 75 dk, sayısal 80 dk; aynı saatte, telefonsuz, optik forma işaretleyerek çöz.</li><li>Deneme sonrası aynı gün yanlış-boş analizi yap; sadece net yazıp geçme.</li></ul></details><details><summary>Süre yönetimi (öneri)</summary><ul><li>Zor soruda <b>1,5 dk</b>ı geçme; soruyu işaretle, sonra dön.</li><li>Önce sana kolay gelen dersten başla; kolay net kaçırmamak öncelik.</li><li>Son 5 dakikayı işaretleme ve kontrol için ayır.</li></ul></details><details><summary>Boş bırakma mı, tahmin mi?</summary><ul><li>Şıklardan en az <b>2 tanesini kesin eleyebiliyorsan</b> işaretlemek genelde mantıklıdır.</li><li>Hiçbir şıkkı eleyemiyorsan bırakmak daha güvenlidir.</li></ul><div class="dipnot">📌 <b>Dipnot:</b> 4 şıklı testte tamamen rastgele işaretlemenin beklenen net katkısı sıfırdır (1/4 doğru, 3/4 yanlış × 1/3). 1 şık elersen beklenen katkı artıya geçer; ne kadar çok şık elersen o kadar avantajlısın.</div></details><details><summary>Sınav günü</summary><ul><li>Sınav giriş belgesi ve kimliğini bir gün önce hazırla; erken yat, kahvaltı yap.</li><li>Sınav öncesi yeni konu çalışma; sadece özet kartlarına bak.</li><li>Heyecan yükselirse 4 saniye nefes al, 6 saniye ver; 3–4 tekrar yap.</li></ul></details></div>
+  <div class="card rh-card">
+    <div class="card-title">✅ HAFTALIK KONTROL LİSTESİ</div>
+<label class="rh-chk-row"><input type="checkbox" class="rh-chk" data-k="a" onchange="chkSave(this)"> Bu hafta en az 1 deneme çözdüm</label><label class="rh-chk-row"><input type="checkbox" class="rh-chk" data-k="b" onchange="chkSave(this)"> Yanlış defterimi güncelledim</label><label class="rh-chk-row"><input type="checkbox" class="rh-chk" data-k="c" onchange="chkSave(this)"> Zayıf konuma ekstra blok ayırdım</label><label class="rh-chk-row"><input type="checkbox" class="rh-chk" data-k="d" onchange="chkSave(this)"> Eski konulardan tekrar yaptım</label><label class="rh-chk-row"><input type="checkbox" class="rh-chk" data-k="e" onchange="chkSave(this)"> Yeterince uyudum ve hareket ettim</label></div>
+  <div class="card">
+    <div class="card-title">📌 NOTLARIM (DİPNOTLAR)</div>
+    <textarea id="notInp" class="ders-input" rows="3" style="width:100%;resize:vertical" placeholder="Kendi taktiğini, öğretmen tavsiyesini, formülünü yaz..."></textarea>
+    <button class="save-btn" style="margin:8px 0 0" onclick="notEkle()">➕ NOTU KAYDET</button>
+    <div id="notList"></div>
+  </div>
+</div>
+
 <div id="arsiv" class="page">
   <div class="card-title" style="padding:4px 0 8px">📜 Aylık Arşiv</div>
   <div id="historyList"></div>
@@ -1223,6 +1304,7 @@ function hesaplaPlan() {
   const seviye = document.getElementById("planSeviye").value;
   const hedefBasari = document.getElementById("planHedefBasari").value;
   const container = document.getElementById("planSonuclar");
+  if (window._ready) savePlan();
 
   if (!sinavTuru || !gunSayisi) {
     container.innerHTML = '<div class="card" style="text-align:center;color:var(--muted);padding:20px">Sınav türü ve kalan gün sayısını girin.</div>';
@@ -1360,9 +1442,16 @@ function hesaplaPlan() {
 }
 
 // ── INIT ──
-window.onload = function() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) db = JSON.parse(saved);
+window.onload = async function() {
+  let saved = null;
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+  if (!saved) {
+    saved = await idbGet();
+    if (saved) { try { localStorage.setItem(STORAGE_KEY, saved); } catch(e) {} }
+  }
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  if (saved) { try { db = JSON.parse(saved); } catch(e) {} }
+  if (!db.months) db.months = {};
   if (!db.dersler) db.dersler = [];
   if (!db.profil) db.profil = {};
   if (!db.alarms) db.alarms = [];
@@ -1378,6 +1467,8 @@ window.onload = function() {
   updateHedefUI();
   updateHedefBadge();
   buildOkulTable();
+  restorePlan(); renderNotlar(); restoreChecks(); renderHome();
+  window._ready = true; persistDB();
 
   document.addEventListener("click", (e) => {
     if (!e.target.closest('.ders-popup') && !e.target.closest('.cell-ders') && !e.target.closest('.a-ders-inp') && !e.target.closest('.okul-cell-inp')) closePopup();
@@ -1597,7 +1688,7 @@ function renderResults() {
   const stats = db.months[currentMonth].stats;
   for (let lesson in stats) {
     const data = stats[lesson];
-    const net = (data.d-(data.y/4)).toFixed(2);
+    const net = (data.d-(data.y/netKat())).toFixed(2);
     const pct = data.s>0?Math.round((data.d/data.s)*100):0;
     gS+=data.s; gD+=data.d; gY+=data.y;
     container.innerHTML+=`
@@ -1616,7 +1707,7 @@ function renderResults() {
       </div>`;
   }
   if (gS>0) {
-    const gNet = (gD-(gY/4)).toFixed(2);
+    const gNet = (gD-(gY/netKat())).toFixed(2);
     document.getElementById("generalTotalArea").innerHTML=`
       <div class="total-card">
         <div class="total-card-title">📊 AYLIK GENEL TOPLAM</div>
@@ -1643,7 +1734,7 @@ function renderArchive() {
     if (mData.stats) for (let l in mData.stats) { const d=mData.stats[l]; tS+=d.s; tD+=d.d; tY+=d.y; }
     const [y,mo]=m.split("-").map(Number);
     const label=`${names[mo-1]} ${y}`;
-    const tNet=(tD-(tY/4)).toFixed(2);
+    const tNet=(tD-(tY/netKat())).toFixed(2);
     list.innerHTML+=`
       <div class="arsiv-card">
         <div class="arsiv-month">📅 ${label}</div>
@@ -1670,7 +1761,7 @@ function clearMonth() {
 function clearAll() {
   if (!confirm("TÜM veriler silinsin mi? Bu işlem geri alınamaz!")) return;
   localStorage.removeItem(STORAGE_KEY);
-  location.reload();
+  idbDel().then(()=>location.reload());
 }
 
 // ── SEKME ──
@@ -1678,10 +1769,15 @@ function openPage(id, btn) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (btn) btn.classList.add('active');
+  if (!btn) btn = [...document.querySelectorAll('.tab-btn')].find(b=>(b.getAttribute('onclick')||'').includes("'"+id+"'"));
+  if (btn) { btn.classList.add('active'); try{ btn.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){} }
+  document.body.classList.toggle('on-home', id==='home');
+  window.scrollTo(0,0);
+  if (id==='home') renderHome();
   if (id==='arsiv') renderArchive();
   if (id==='ayarlar') renderDerslerGrid();
   if (id==='okul') { buildOkulTable(); }
+  if (id==='rehber') { renderNotlar(); restoreChecks(); }
 }
 
 // ── YEDEK ──
@@ -1695,12 +1791,55 @@ function exportData() {
 }
 function importData(e) {
   const reader = new FileReader();
-  reader.onload = function(ev) { localStorage.setItem(STORAGE_KEY,ev.target.result); location.reload(); };
+  reader.onload = function(ev) { try { JSON.parse(ev.target.result); } catch(_) { showToast("⚠️ Geçersiz yedek dosyası"); return; } localStorage.setItem(STORAGE_KEY,ev.target.result); idbSet(ev.target.result).then(()=>location.reload()); };
   reader.readAsText(e.target.files[0]);
 }
 
 // ── PERSIST ──
-function persistDB() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+function persistDB() {
+  const s = JSON.stringify(db);
+  try { localStorage.setItem(STORAGE_KEY, s); } catch(e) {}
+  idbSet(s);
+}
+// IndexedDB yedek katmanı (localStorage silinirse geri yükler)
+function idbOpen(){ return new Promise((res,rej)=>{ try{ const r=indexedDB.open('acamay_backup',1); r.onupgradeneeded=()=>r.result.createObjectStore('kv'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);}catch(e){rej(e);} }); }
+function idbSet(v){ return idbOpen().then(d=>new Promise(res=>{ const t=d.transaction('kv','readwrite'); t.objectStore('kv').put(v,STORAGE_KEY); t.oncomplete=()=>res(); t.onerror=()=>res(); })).catch(()=>{}); }
+function idbGet(){ return idbOpen().then(d=>new Promise(res=>{ const q=d.transaction('kv').objectStore('kv').get(STORAGE_KEY); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); })).catch(()=>null); }
+function idbDel(){ return idbOpen().then(d=>new Promise(res=>{ const t=d.transaction('kv','readwrite'); t.objectStore('kv').delete(STORAGE_KEY); t.oncomplete=()=>res(); t.onerror=()=>res(); })).catch(()=>{}); }
+function flushAll(){ if(!window._ready) return; try{ getMonthData(); autoSaveOkul(); savePlan(); }catch(e){} persistDB(); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flushAll(); });
+window.addEventListener('pagehide',flushAll);
+
+// ── PLAN KAYDI ──
+function savePlan(){
+  const g=id=>{const e=document.getElementById(id);return e?e.value:"";};
+  db.plan={tur:g('planSinavTuru'),gun:g('planGunSayisi'),saat:g('planGunSaat'),okul:g('planOkulVar'),sev:g('planSeviye'),hedef:g('planHedefBasari')};
+  persistDB();
+}
+function restorePlan(){
+  const p=db.plan; if(!p) return;
+  const s=(id,v)=>{const e=document.getElementById(id); if(e&&v!==undefined&&v!==null&&v!=="") e.value=v;};
+  s('planSinavTuru',p.tur); s('planGunSayisi',p.gun); s('planGunSaat',p.saat); s('planOkulVar',p.okul); s('planSeviye',p.sev); s('planHedefBasari',p.hedef);
+  hesaplaPlan();
+}
+// ── REHBER: NOTLAR & KONTROL ──
+function escNot(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function notEkle(){const i=document.getElementById('notInp');const v=i.value.trim();if(!v)return;(db.notlar=db.notlar||[]).unshift({t:v,d:new Date().toLocaleDateString('tr-TR')});i.value='';persistDB();renderNotlar();showToast('📌 Not kaydedildi');}
+function notSil(i){if(!confirm('Not silinsin mi?'))return;db.notlar.splice(i,1);persistDB();renderNotlar();}
+function renderNotlar(){const el=document.getElementById('notList');if(!el)return;const n=db.notlar||[];el.innerHTML=n.length?n.map((x,i)=>`<div class="not-item"><div>${escNot(x.t)}<small>${x.d}</small></div><button class="del-btn" onclick="notSil(${i})">×</button></div>`).join(''):'<div style="color:var(--muted);text-align:center;padding:8px;font-size:11px">Henüz not yok.</div>';}
+function chkSave(cb){(db.rehberCheck=db.rehberCheck||{})[cb.dataset.k]=cb.checked;persistDB();}
+function restoreChecks(){document.querySelectorAll('.rh-chk').forEach(c=>{c.checked=!!(db.rehberCheck&&db.rehberCheck[c.dataset.k]);});}
+function renderHome(){
+  const nm=(db.profil&&db.profil.ad)||'';
+  const set=(i,v)=>{const e=document.getElementById(i);if(e)e.textContent=v;};
+  set('hhName', nm?('Merhaba '+nm+' 👋'):'Merhaba 👋');
+  set('hhSub', db.hedef?('Hedefin: '+db.hedef+' — bugün bir adım daha at'):'Bir bölüm seç ve başla');
+  const g=db.plan&&parseInt(db.plan.gun); set('hsGun', g>0?g:'—');
+  let S=0,D=0,Y=0; const st=db.months&&db.months[currentMonth]&&db.months[currentMonth].stats||{};
+  for(const k in st){S+=st[k].s||0;D+=st[k].d||0;Y+=st[k].y||0;}
+  set('hsSoru',S); set('hsNet',(D-Y/netKat()).toFixed(1).replace(/\.0$/,''));
+}
+function netKat(){ return db.hedef==='LGS' ? 3 : 4; }
 
 // ── TOAST ──
 function showToast(msg) {
@@ -1727,41 +1866,40 @@ function showToast(msg) {
   // Saved analysis records: add edit/delete support without destroying legacy data.
   window.proEditStat = function(month,name){
     try{
-      const db0=JSON.parse(localStorage.getItem('studyDB')||localStorage.getItem('db')||'null');
+      const db0=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
       if(!db0) return;
       const m=db0.months?.[month]; const s=m?.stats?.[name];
       if(!s){ alert('Kayıt bulunamadı.'); return; }
-      const dogru=prompt(name+' - Doğru sayısı',s.correct??s.dogru??0);
+      const dogru=prompt(name+' - Doğru sayısı',s.d??0);
       if(dogru===null)return;
-      const yanlis=prompt(name+' - Yanlış sayısı',s.wrong??s.yanlis??0);
+      const yanlis=prompt(name+' - Yanlış sayısı',s.y??0);
       if(yanlis===null)return;
-      s.correct=s.dogru=safeNum(dogru);
-      s.wrong=s.yanlis=safeNum(yanlis);
-      s.net=s.correct-s.wrong/(window.sinavNetKatsayi||4);
-      localStorage.setItem('studyDB',JSON.stringify(db0));
-      location.reload();
+      s.d=safeNum(dogru);
+      s.y=safeNum(yanlis);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(db0));
+      idbSet(JSON.stringify(db0)).then(()=>location.reload());
     }catch(e){console.warn(e)}
   };
 
   window.proDeleteStat = function(month,name){
     if(!confirm(name+' kaydını silmek istediğine emin misin?'))return;
     try{
-      const keys=['studyDB','db'];
+      const keys=[STORAGE_KEY];
       for(const k of keys){
         const raw=localStorage.getItem(k); if(!raw)continue;
         const d=JSON.parse(raw);
         if(d.months?.[month]?.stats?.[name]){
           delete d.months[month].stats[name];
-          localStorage.setItem(k,JSON.stringify(d));
+          localStorage.setItem(k,JSON.stringify(d)); idbSet(JSON.stringify(d));
         }
       }
-      location.reload();
+      setTimeout(()=>location.reload(),150);
     }catch(e){console.warn(e)}
   };
 
   // Robust backup: versioned envelope + validation, while accepting the old raw JSON format.
   window.exportProfessionalBackup = function(){
-    const keys=['studyDB','db'];
+    const keys=[STORAGE_KEY];
     let payload=null, sourceKey=null;
     for(const k of keys){ const raw=localStorage.getItem(k); if(raw){try{payload=JSON.parse(raw);sourceKey=k;break}catch(e){}}}
     if(!payload){alert('Yedeklenecek veri bulunamadı.');return;}
@@ -1781,17 +1919,15 @@ function showToast(msg) {
         const data=parsed?.data?.months ? parsed.data : parsed;
         if(!data || typeof data!=='object' || !data.months) throw new Error('Geçersiz yedek');
         if(!confirm('Mevcut veriler yedekten gelen verilerle değiştirilecek. Devam edilsin mi?'))return;
-        localStorage.setItem('studyDB',JSON.stringify(data));
-        localStorage.setItem('db',JSON.stringify(data));
-        alert('Yedek başarıyla geri yüklendi.');
-        location.reload();
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+        idbSet(JSON.stringify(data)).then(()=>{alert('Yedek başarıyla geri yüklendi.');location.reload();});
       }catch(e){alert('Yedek dosyası geçersiz veya bozuk.');}
     };
     reader.readAsText(file);
   };
 
   function getDb(){
-    for(const k of ['studyDB','db']){
+    for(const k of [STORAGE_KEY]){
       try{const d=JSON.parse(localStorage.getItem(k)||'null');if(d)return d}catch(e){}
     }
     return null;
@@ -1912,6 +2048,7 @@ function showToast(msg) {
 
 </script>
 
+<button class="home-fab" onclick="openPage('home')">🏠 Ana Ekran</button>
 <div style="position:fixed;right:10px;bottom:8px;z-index:50;pointer-events:none;
 background:rgba(255,255,255,.92);border:1px solid #e7ebf2;border-radius:999px;
 padding:5px 9px;font-size:10px;color:#667085;box-shadow:0 4px 14px rgba(20,35,70,.08)">
