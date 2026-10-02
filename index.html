@@ -287,6 +287,23 @@ body { background: var(--bg); font-family: 'Nunito', sans-serif; font-size: 12px
 .add-stat-btn { background: var(--green); color: white; border: none; border-radius: 6px; padding: 6px 8px; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; width: 100%; }
 .del-row-btn { background: var(--red); color: white; border: none; border-radius: 6px; padding: 6px 8px; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; width: 100%; }
 
+
+.add-stat-btn { font-size: 10px !important; padding: 6px 2px !important; }
+.ozet-card { background: #fff; border-radius: 14px; padding: 12px; margin-top: 10px; box-shadow: var(--shadow); }
+.ozet-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.ozet-title { font-size: 12px; font-weight: 900; color: var(--blue); letter-spacing: .5px; }
+.ozet-sub { font-size: 9px; color: var(--muted); font-weight: 700; }
+.ozet-row { border-top: 1px solid #eef2f7; padding: 7px 0; }
+.ozet-r1 { display:flex; justify-content:space-between; align-items:center; gap:6px; }
+.ozet-ders { font-size: 11px; font-weight: 800; color: var(--text); }
+.ozet-badge { font-size: 9px; font-weight: 900; color:#fff; border-radius: 12px; padding: 2px 8px; white-space: nowrap; }
+.ozet-nums { display:flex; gap:10px; font-size: 10px; font-weight: 700; color: var(--muted); margin: 3px 0 4px; flex-wrap: wrap; }
+.ozet-nums b { color: var(--text); }
+.ozet-bar { height: 7px; background: #e8eef5; border-radius: 6px; overflow: hidden; }
+.ozet-bar > div { height: 100%; border-radius: 6px; }
+.ozet-total { background: linear-gradient(135deg, var(--navy), #1a2d45); color:#fff; border-radius: 12px; padding: 10px; margin-top: 6px; }
+.ozet-total .big { font-size: 22px; font-weight: 900; color: var(--cyan); }
+
 .stat-card { border-radius: 10px; padding: 10px; margin-bottom: 8px; border-left: 4px solid var(--blue2); background: #f8fafc; }
 .stat-card-title { font-size: 12px; font-weight: 900; color: var(--blue); margin-bottom: 6px; }
 .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; }
@@ -800,15 +817,15 @@ input,select,textarea{font-size:16px!important}table{font-size:12px!important}
   </div>
 
   <div class="card">
-    <div class="card-title">📝 SORU ANALİZİ</div>
+    <div class="card-title">📝 GÜNLÜK SORU GİRİŞİ <span id="bugunEtiket" style="float:right;font-size:9px;color:var(--muted);font-weight:700"></span></div>
     <table class="analiz-table">
       <thead>
         <tr>
-          <th style="width:38%">DERS</th>
+          <th style="width:34%">DERS</th>
           <th>SORU</th>
           <th>D</th>
           <th>Y</th>
-          <th>+</th>
+          <th style="width:21%">KAYDET</th>
           <th>🗑</th>
         </tr>
       </thead>
@@ -845,6 +862,10 @@ input,select,textarea{font-size:16px!important}table{font-size:12px!important}
           <option value="LGS">LGS</option>
           <option value="OZEL">Özel Hedef</option>
         </select>
+      </div>
+      <div class="plan-field">
+        <span class="plan-label">🗓 Sınav Tarihi (otomatik geri sayım)</span>
+        <input type="date" class="plan-inp" id="planSinavTarihi" onchange="hesaplaPlan()">
       </div>
       <div class="plan-field">
         <span class="plan-label">📅 Sınava Kalan Gün</span>
@@ -1305,7 +1326,16 @@ function planSinavSecildi() {
   hesaplaPlan();
 }
 
+function kalanGunHesapla(t) {
+  if (!t) return null;
+  const [y,m,d] = t.split("-").map(Number);
+  if (!y) return null;
+  const now = new Date(); const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.max(0, Math.round((new Date(y, m-1, d) - bugun) / 86400000));
+}
 function hesaplaPlan() {
+  const _t = document.getElementById("planSinavTarihi");
+  if (_t && _t.value) { const k = kalanGunHesapla(_t.value); if (k !== null) document.getElementById("planGunSayisi").value = k; }
   const sinavTuru = document.getElementById("planSinavTuru").value;
   const gunSayisi = parseInt(document.getElementById("planGunSayisi").value) || 0;
   const gunSaat = parseFloat(document.getElementById("planGunSaat").value) || 6;
@@ -1665,13 +1695,17 @@ function loadDataByMonth() {
 function addAnalizRow(name="") {
   const row = document.getElementById("entryBody").insertRow();
   row.innerHTML = `
-    <td><input type="text" class="a-ders-inp" value="${name}" onfocus="openDersPopup(this)" oninput="filterDersPopup(this)"></td>
-    <td><input type="number" class="a-num-inp e-s" min="0" placeholder="0"></td>
-    <td><input type="number" class="a-num-inp e-d" min="0" placeholder="0"></td>
-    <td><input type="number" class="a-num-inp e-y" min="0" placeholder="0"></td>
-    <td><button class="add-stat-btn" onclick="addStat(this)">+</button></td>
+    <td><input type="text" class="a-ders-inp" value="${String(name).replace(/"/g,'&quot;')}" onfocus="openDersPopup(this)" oninput="filterDersPopup(this)"></td>
+    <td><input type="number" inputmode="numeric" class="a-num-inp e-s" min="0" placeholder="0"></td>
+    <td><input type="number" inputmode="numeric" class="a-num-inp e-d" min="0" placeholder="0"></td>
+    <td><input type="number" inputmode="numeric" class="a-num-inp e-y" min="0" placeholder="0"></td>
+    <td><button class="add-stat-btn" onclick="addStat(this)">💾 Kaydet</button></td>
     <td><button class="del-row-btn" onclick="this.closest('tr').remove()">🗑</button></td>
   `;
+}
+function todayKey() {
+  const t = new Date();
+  return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");
 }
 function addStat(btn) {
   const row = btn.closest('tr');
@@ -1680,54 +1714,78 @@ function addStat(btn) {
   const d = parseInt(row.querySelector(".e-d").value)||0;
   const y = parseInt(row.querySelector(".e-y").value)||0;
   if (!name||s===0) { showToast("⚠️ Ders adı ve soru sayısı girin!"); return; }
-  if (!db.months[currentMonth]) db.months[currentMonth]={program:{},stats:{}};
-  if (!db.months[currentMonth].stats) db.months[currentMonth].stats={};
-  if (!db.months[currentMonth].stats[name]) db.months[currentMonth].stats[name]={s:0,d:0,y:0};
-  db.months[currentMonth].stats[name].s+=s;
-  db.months[currentMonth].stats[name].d+=d;
-  db.months[currentMonth].stats[name].y+=y;
+  if (d+y>s) { showToast("⚠️ Doğru + Yanlış, soru sayısından büyük olamaz!"); return; }
+  // bugünün ayına yaz (gün değişmişse ay da güncel olsun)
+  const mk = todayKey().slice(0,7);
+  if (!db.months[mk]) db.months[mk]={program:{},stats:{}};
+  if (!db.months[mk].stats) db.months[mk].stats={};
+  if (!db.months[mk].stats[name]) db.months[mk].stats[name]={s:0,d:0,y:0};
+  const st = db.months[mk].stats[name];
+  st.s+=s; st.d+=d; st.y+=y;
+  // günlük kayıt
+  if (!db.gunluk) db.gunluk={};
+  const gk = todayKey();
+  if (!db.gunluk[gk]) db.gunluk[gk]={};
+  if (!db.gunluk[gk][name]) db.gunluk[gk][name]={s:0,d:0,y:0};
+  db.gunluk[gk][name].s+=s; db.gunluk[gk][name].d+=d; db.gunluk[gk][name].y+=y;
+  // satırı sıfırla (ders adı kalır)
   row.querySelector(".e-s").value=""; row.querySelector(".e-d").value=""; row.querySelector(".e-y").value="";
-  persistDB(); renderResults(); showToast("✅ Kaydedildi!");
+  persistDB(); renderResults();
+  showToast("✅ "+name+" kaydedildi: "+d+" D / "+y+" Y");
+}
+function basariOrani(d,y){ return (d+y)>0 ? Math.round(d/(d+y)*100) : 0; }
+function derece(p, hasData){
+  if(!hasData) return {t:"—",c:"#9aa5b4"};
+  if(p>=90) return {t:"⭐ Mükemmel",c:"#00b894"};
+  if(p>=80) return {t:"🏆 Çok İyi",c:"#2e9e5b"};
+  if(p>=70) return {t:"👍 İyi",c:"#1976d2"};
+  if(p>=50) return {t:"📈 Orta",c:"#ffb300"};
+  return {t:"⚠️ Geliştir",c:"#e53935"};
+}
+function ozetHTML(title, sub, stats){
+  const keys = Object.keys(stats||{}).filter(k=>stats[k].s>0);
+  if(!keys.length) return `<div class="ozet-card"><div class="ozet-head"><div class="ozet-title">${title}</div><div class="ozet-sub">${sub}</div></div><div style="text-align:center;color:var(--muted);font-size:11px;padding:8px">Henüz kayıt yok.</div></div>`;
+  let gS=0,gD=0,gY=0, rows="";
+  keys.forEach(k=>{
+    const t=stats[k]; gS+=t.s; gD+=t.d; gY+=t.y;
+    const p=basariOrani(t.d,t.y), dr=derece(p,(t.d+t.y)>0);
+    const net=(t.d-(t.y/netKat())).toFixed(2);
+    rows+=`<div class="ozet-row">
+      <div class="ozet-r1"><span class="ozet-ders">${k}</span><span class="ozet-badge" style="background:${dr.c}">${dr.t} · %${p}</span></div>
+      <div class="ozet-nums"><span>Soru <b>${t.s}</b></span><span>Doğru <b style="color:var(--green)">${t.d}</b></span><span>Yanlış <b style="color:var(--red)">${t.y}</b></span><span>Net <b style="color:var(--blue)">${net}</b></span></div>
+      <div class="ozet-bar"><div style="width:${p}%;background:${dr.c}"></div></div>
+    </div>`;
+  });
+  const gp=basariOrani(gD,gY), gdr=derece(gp,(gD+gY)>0), gNet=(gD-(gY/netKat())).toFixed(2);
+  return `<div class="ozet-card">
+    <div class="ozet-head"><div class="ozet-title">${title}</div><div class="ozet-sub">${sub}</div></div>
+    <div class="ozet-total">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:9px;color:#aac8ff;font-weight:700">GENEL BAŞARI</div><div class="big">%${gp}</div></div>
+        <span class="ozet-badge" style="background:${gdr.c};font-size:11px;padding:4px 12px">${gdr.t}</span>
+      </div>
+      <div class="ozet-nums" style="color:#aac8ff;margin-top:6px"><span>Soru <b style="color:#fff">${gS}</b></span><span>Doğru <b style="color:#5fffb8">${gD}</b></span><span>Yanlış <b style="color:#ff8a80">${gY}</b></span><span>Net <b style="color:var(--cyan)">${gNet}</b></span></div>
+    </div>${rows}</div>`;
 }
 function renderResults() {
-  const container = document.getElementById("cumulativeResults");
-  container.innerHTML="";
-  if (!db.months[currentMonth]||!db.months[currentMonth].stats) return;
-  let gS=0,gD=0,gY=0;
-  const stats = db.months[currentMonth].stats;
-  for (let lesson in stats) {
-    const data = stats[lesson];
-    const net = (data.d-(data.y/netKat())).toFixed(2);
-    const pct = data.s>0?Math.round((data.d/data.s)*100):0;
-    gS+=data.s; gD+=data.d; gY+=data.y;
-    container.innerHTML+=`
-      <div class="stat-card">
-        <div class="stat-card-title">${lesson}</div>
-        <div class="stat-grid">
-          <div class="sg-item"><span class="sg-lbl">Soru</span><span class="sg-val">${data.s}</span></div>
-          <div class="sg-item"><span class="sg-lbl">Doğru</span><span class="sg-val green">${data.d}</span></div>
-          <div class="sg-item"><span class="sg-lbl">Yanlış</span><span class="sg-val red">${data.y}</span></div>
-          <div class="sg-item"><span class="sg-lbl">Net</span><span class="sg-val blue">${net}</span></div>
-        </div>
-        <div class="progress-bar-wrap" style="margin-top:6px">
-          <div class="progress-bar-fill" style="width:${pct}%"></div>
-        </div>
-        <div style="text-align:right;font-size:9px;color:var(--muted);margin-top:2px">Başarı: %${pct}</div>
-      </div>`;
-  }
-  if (gS>0) {
-    const gNet = (gD-(gY/netKat())).toFixed(2);
-    document.getElementById("generalTotalArea").innerHTML=`
-      <div class="total-card">
-        <div class="total-card-title">📊 AYLIK GENEL TOPLAM</div>
-        <div class="stat-grid">
-          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Soru</span><span class="sg-val" style="color:#fff">${gS}</span></div>
-          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Doğru</span><span class="sg-val green">${gD}</span></div>
-          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Yanlış</span><span class="sg-val red">${gY}</span></div>
-          <div class="sg-item"><span class="sg-lbl" style="color:#aaa">Net</span><span class="sg-val" style="color:var(--cyan)">${gNet}</span></div>
-        </div>
-      </div>`;
-  } else { document.getElementById("generalTotalArea").innerHTML=""; }
+  const names=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+  const [yr,mo]=currentMonth.split("-").map(Number);
+  // bugün etiketi
+  const lbl=document.getElementById("bugunEtiket");
+  if(lbl){ const g=(db.gunluk&&db.gunluk[todayKey()])||{}; let bs=0,bd=0,by=0; Object.values(g).forEach(t=>{bs+=t.s;bd+=t.d;by+=t.y;}); lbl.textContent = bs>0 ? `Bugün: ${bs} soru · ${bd}D ${by}Y · %${basariOrani(bd,by)}` : "Bugün: —"; }
+  // aylık
+  const mStats=(db.months[currentMonth]&&db.months[currentMonth].stats)||{};
+  // yıllık (yıldaki tüm aylar)
+  const yStats={};
+  Object.keys(db.months).forEach(m=>{
+    if(!m.startsWith(yr+"-")) return;
+    const st=db.months[m].stats||{};
+    for(const k in st){ if(!yStats[k]) yStats[k]={s:0,d:0,y:0}; yStats[k].s+=st[k].s; yStats[k].d+=st[k].d; yStats[k].y+=st[k].y; }
+  });
+  document.getElementById("cumulativeResults").innerHTML =
+    ozetHTML("📅 AYLIK ÖZET", names[mo-1]+" "+yr, mStats) +
+    ozetHTML("🗓 YILLIK ÖZET", String(yr), yStats);
+  document.getElementById("generalTotalArea").innerHTML="";
 }
 
 // ── ARŞİV ──
@@ -1822,13 +1880,13 @@ window.addEventListener('pagehide',flushAll);
 // ── PLAN KAYDI ──
 function savePlan(){
   const g=id=>{const e=document.getElementById(id);return e?e.value:"";};
-  db.plan={tur:g('planSinavTuru'),gun:g('planGunSayisi'),saat:g('planGunSaat'),okul:g('planOkulVar'),sev:g('planSeviye'),hedef:g('planHedefBasari')};
+  db.plan={tur:g('planSinavTuru'),gun:g('planGunSayisi'),saat:g('planGunSaat'),tarih:g('planSinavTarihi'),okul:g('planOkulVar'),sev:g('planSeviye'),hedef:g('planHedefBasari')};
   persistDB();
 }
 function restorePlan(){
   const p=db.plan; if(!p) return;
   const s=(id,v)=>{const e=document.getElementById(id); if(e&&v!==undefined&&v!==null&&v!=="") e.value=v;};
-  s('planSinavTuru',p.tur); s('planGunSayisi',p.gun); s('planGunSaat',p.saat); s('planOkulVar',p.okul); s('planSeviye',p.sev); s('planHedefBasari',p.hedef);
+  s('planSinavTuru',p.tur); s('planGunSayisi',p.gun); s('planGunSaat',p.saat); s('planSinavTarihi',p.tarih); s('planOkulVar',p.okul); s('planSeviye',p.sev); s('planHedefBasari',p.hedef);
   hesaplaPlan();
 }
 // ── REHBER: NOTLAR & KONTROL ──
@@ -1843,7 +1901,7 @@ function renderHome(){
   const set=(i,v)=>{const e=document.getElementById(i);if(e)e.textContent=v;};
   set('hhName', nm?('Merhaba '+nm+' 👋'):'Merhaba 👋');
   set('hhSub', db.hedef?('Hedefin: '+db.hedef+' — bugün bir adım daha at'):'Bir bölüm seç ve başla');
-  const g=db.plan&&parseInt(db.plan.gun); set('hsGun', g>0?g:'—');
+  let g=db.plan&&parseInt(db.plan.gun); if(db.plan&&db.plan.tarih){const k=kalanGunHesapla(db.plan.tarih); if(k!==null) g=k;} set('hsGun', g>0?g:(g===0&&db.plan&&db.plan.tarih?'0':'—'));
   let S=0,D=0,Y=0; const st=db.months&&db.months[currentMonth]&&db.months[currentMonth].stats||{};
   for(const k in st){S+=st[k].s||0;D+=st[k].d||0;Y+=st[k].y||0;}
   set('hsSoru',S); set('hsNet',(D-Y/netKat()).toFixed(1).replace(/\.0$/,''));
