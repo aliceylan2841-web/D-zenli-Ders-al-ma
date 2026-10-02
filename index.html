@@ -831,7 +831,11 @@ input,select,textarea{font-size:16px!important}table{font-size:12px!important}
       </thead>
       <tbody id="entryBody"></tbody>
     </table>
-    <button class="btn-primary" style="margin-top:10px;width:100%" onclick="addAnalizRow()">+ Ders Satırı Ekle</button>
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <button class="btn-primary" style="flex:1" onclick="addAnalizRow()">+ Ders Satırı Ekle</button>
+      <button class="btn-amber" style="padding:12px 10px" onclick="varsayilanaDon()" title="Varsayılan dersler">↺</button>
+    </div>
+    <button class="btn-green" style="margin-top:8px;width:100%;font-size:13px" onclick="tumunuKaydet()">💾 TÜMÜNÜ KAYDET</button>
   </div>
 
   <div id="cumulativeResults"></div>
@@ -1532,13 +1536,14 @@ function loadProfil() {
 }
 
 // ── HEDEF ──
-function setHedef(h) { db.hedef = h; persistDB(); updateHedefUI(); updateHedefBadge(); }
+function setHedef(h) { db.hedef = h; persistDB(); updateHedefUI(); updateHedefBadge(); if(!db.analizOzel && document.getElementById('entryBody')) buildAnalizRows(); }
 function updateHedefUI() {
   document.querySelectorAll('.hedef-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.replace(/\s/g,'') === db.hedef.replace(/\s/g,''));
   });
   const icons = {'YKS-TM':'🏛️','YKS-MF':'⚗️','YKS-TS':'📜','YKS-DIL':'🌍','LGS':'📘','ÖZEL':'⭐'};
   const titles = {'YKS-TM':'YKS — TM Hedefli','YKS-MF':'YKS — MF Hedefli','YKS-TS':'YKS — TS Hedefli','YKS-DIL':'YKS — Dil Hedefli','LGS':'LGS Hedefli','ÖZEL':'Özel Hedef'};
+  const _ts = document.querySelector('#analiz .target-sub'); if (_ts) _ts.textContent = 'Net hesabı otomatik yapılır (Y/'+netKat()+' çıkarılır)';
   const e = document.getElementById("targetEmoji");
   const t = document.getElementById("targetTitle");
   if (e && db.hedef) { e.textContent = icons[db.hedef]||'🎯'; t.textContent = titles[db.hedef]||db.hedef; }
@@ -1681,57 +1686,94 @@ function loadDataByMonth() {
     });
   }
 
-  const entryBody = document.getElementById("entryBody");
-  entryBody.innerHTML="";
-  if (mData && mData.stats) {
-    Object.keys(mData.stats).forEach(k=>addAnalizRow(k));
-  } else {
-    ["Matematik","Türkçe","Fen"].forEach(k=>addAnalizRow(k));
-  }
+  buildAnalizRows();
   renderResults();
 }
 
 // ── ANALİZ ──
+var _analizBuilding = false;
+function varsayilanDersler(){
+  const m={
+    'LGS':['Matematik','Türkçe','Fen Bilimleri','T.C. İnkılap Tarihi','İngilizce','Din Kültürü'],
+    'YKS-TM':['Türkçe','Matematik','Geometri','Edebiyat','Tarih','Coğrafya','Felsefe'],
+    'YKS-MF':['Türkçe','Matematik','Geometri','Fizik','Kimya','Biyoloji'],
+    'YKS-TS':['Türkçe','Edebiyat','Tarih','Coğrafya','Felsefe','Din Kültürü'],
+    'YKS-DIL':['Türkçe','Yabancı Dil','Tarih','Coğrafya']
+  };
+  return (m[db.hedef]||['Matematik','Türkçe','Fen Bilimleri','Sosyal Bilgiler']).slice();
+}
+function analizDersListesi(){
+  return db.analizOzel ? (db.analizDersler||[]) : varsayilanDersler();
+}
+function buildAnalizRows(){
+  const b=document.getElementById("entryBody"); if(!b) return;
+  b.innerHTML=""; _analizBuilding=true;
+  analizDersListesi().forEach(n=>addAnalizRow(n));
+  _analizBuilding=false;
+}
+function syncAnalizList(){
+  if(_analizBuilding) return;
+  db.analizDersler=[...document.querySelectorAll("#entryBody .a-ders-inp")].map(i=>i.value.trim()).filter(Boolean);
+  db.analizOzel=true; persistDB();
+}
+function varsayilanaDon(){
+  if(!confirm("Ders listesi hedefine göre varsayılan derslere dönsün mü?")) return;
+  db.analizOzel=false; db.analizDersler=[]; persistDB(); buildAnalizRows(); showToast("↺ Varsayılan dersler yüklendi");
+}
 function addAnalizRow(name="") {
   const row = document.getElementById("entryBody").insertRow();
   row.innerHTML = `
-    <td><input type="text" class="a-ders-inp" value="${String(name).replace(/"/g,'&quot;')}" onfocus="openDersPopup(this)" oninput="filterDersPopup(this)"></td>
+    <td><input type="text" class="a-ders-inp" value="${String(name).replace(/"/g,'&quot;')}" onfocus="openDersPopup(this)" oninput="filterDersPopup(this)" onchange="syncAnalizList()"></td>
     <td><input type="number" inputmode="numeric" class="a-num-inp e-s" min="0" placeholder="0"></td>
     <td><input type="number" inputmode="numeric" class="a-num-inp e-d" min="0" placeholder="0"></td>
     <td><input type="number" inputmode="numeric" class="a-num-inp e-y" min="0" placeholder="0"></td>
     <td><button class="add-stat-btn" onclick="addStat(this)">💾 Kaydet</button></td>
-    <td><button class="del-row-btn" onclick="this.closest('tr').remove()">🗑</button></td>
+    <td><button class="del-row-btn" onclick="this.closest('tr').remove();syncAnalizList()">🗑</button></td>
   `;
+  if(!_analizBuilding) syncAnalizList();
 }
 function todayKey() {
   const t = new Date();
   return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");
 }
-function addStat(btn) {
-  const row = btn.closest('tr');
+// Tek satırı kaydeder: "ok" | "bos" | "hata"
+function kaydetSatir(row) {
   const name = row.querySelector(".a-ders-inp").value.trim();
   const s = parseInt(row.querySelector(".e-s").value)||0;
   const d = parseInt(row.querySelector(".e-d").value)||0;
   const y = parseInt(row.querySelector(".e-y").value)||0;
-  if (!name||s===0) { showToast("⚠️ Ders adı ve soru sayısı girin!"); return; }
-  if (d+y>s) { showToast("⚠️ Doğru + Yanlış, soru sayısından büyük olamaz!"); return; }
-  // bugünün ayına yaz (gün değişmişse ay da güncel olsun)
+  if (!s && !d && !y) return "bos";
+  if (!name||s===0||d+y>s) return "hata";
   const mk = todayKey().slice(0,7);
   if (!db.months[mk]) db.months[mk]={program:{},stats:{}};
   if (!db.months[mk].stats) db.months[mk].stats={};
   if (!db.months[mk].stats[name]) db.months[mk].stats[name]={s:0,d:0,y:0};
-  const st = db.months[mk].stats[name];
-  st.s+=s; st.d+=d; st.y+=y;
-  // günlük kayıt
+  const st = db.months[mk].stats[name]; st.s+=s; st.d+=d; st.y+=y;
   if (!db.gunluk) db.gunluk={};
   const gk = todayKey();
   if (!db.gunluk[gk]) db.gunluk[gk]={};
   if (!db.gunluk[gk][name]) db.gunluk[gk][name]={s:0,d:0,y:0};
-  db.gunluk[gk][name].s+=s; db.gunluk[gk][name].d+=d; db.gunluk[gk][name].y+=y;
-  // satırı sıfırla (ders adı kalır)
+  const g = db.gunluk[gk][name]; g.s+=s; g.d+=d; g.y+=y;
   row.querySelector(".e-s").value=""; row.querySelector(".e-d").value=""; row.querySelector(".e-y").value="";
-  persistDB(); renderResults();
-  showToast("✅ "+name+" kaydedildi: "+d+" D / "+y+" Y");
+  return "ok";
+}
+function addStat(btn) {
+  const row = btn.closest('tr');
+  const r = kaydetSatir(row);
+  if (r==="bos") { showToast("⚠️ Ders adı ve soru sayısı girin!"); return; }
+  if (r==="hata") { showToast("⚠️ Ders adı, soru sayısı girin; D + Y soru sayısını aşamaz!"); return; }
+  persistDB(); renderResults(); showToast("✅ Kaydedildi!");
+}
+function tumunuKaydet() {
+  let ok=0, hata=0;
+  document.querySelectorAll("#entryBody tr").forEach(row=>{
+    const r = kaydetSatir(row);
+    if (r==="ok") ok++; else if (r==="hata") { hata++; row.style.background="#fff3f3"; setTimeout(()=>row.style.background="",2500); }
+  });
+  if (ok) { persistDB(); renderResults(); }
+  if (!ok && !hata) showToast("⚠️ Kaydedilecek veri girilmedi");
+  else if (hata) showToast(`✅ ${ok} ders kaydedildi · ⚠️ ${hata} satırda hata (kırmızı)`);
+  else showToast(`✅ ${ok} ders kaydedildi`);
 }
 function basariOrani(d,y){ return (d+y)>0 ? Math.round(d/(d+y)*100) : 0; }
 function derece(p, hasData){
